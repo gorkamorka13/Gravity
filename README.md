@@ -46,4 +46,55 @@ Le simulateur affiche :
 Le programme repose sur les équations du mouvement d’un projectile :
 - Sans frottement :  
   \[
-  y(x) = h + x \tan(\alpha) - \frac{g x^2}{2 v_0^2 \cos^2(\alpha)_
+  y(x) = h + x \tan(\alpha) - \frac{g x^2}{2 v_0^2 \cos^2(\alpha)}
+  \]
+- Avec frottement (linéaire ou quadratique) : intégration numérique pas-à-pas selon :
+  \[
+  \vec{F} = -k v^n - m g \hat{j}
+  \]
+  où *n = 1* pour le modèle linéaire et *n = 2* pour le modèle quadratique.
+
+---
+
+## 🖥️ Interface et ergonomie
+
+- **Canvas HTML5** pour le rendu des trajectoires et vecteurs.  
+- **Panneau de contrôle interactif**, accessible sur ordinateur et mobile.  
+- **Thème clair et moderne**, avec boutons colorés et sliders intuitifs.  
+- **Responsive design** : la mise en page s’adapte automatiquement à l’écran.
+
+---
+
+## 📱 Utilisation
+
+1. Ouvre simplement le fichier [`index.html`](./index.html) dans ton navigateur.
+2. Choisis ton **mode** : *Simulation* ou *Cible*.
+3. Règle les paramètres (vitesse, angle, etc.).
+4. Clique sur **Go** pour lancer la simulation.
+5. Observe les résultats, les vecteurs vitesse et les équations générées.
+
+---
+
+## 🧩 Technologies utilisées
+
+- **HTML5** (structure et canvas)
+- **CSS3** (mise en page responsive, design clair)
+- **JavaScript** (moteur de simulation et physique, rendu en temps réel)
+- Aucun framework externe requis — tout est en **vanilla JS**.
+
+---
+
+## 👨‍🔬 Auteur
+
+Projet développé par **Michel Esparsa**  
+📅 Dernière mise à jour : **03/11/2025**
+
+---
+
+## 📜 Licence
+
+Ce projet est distribué sous licence **MIT**.  
+Tu peux le modifier, le réutiliser et le partager librement avec mention de l’auteur.
+
+---
+
