@@ -2,652 +2,644 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Simulateur de Mouvement Parabolique</title>
     <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
     <style>
-      /* ==========================================================================
-           1. STYLES DE BASE (MOBILE-FIRST)
-           ========================================================================== */
+      /* =========================================
+       1. VARIABLES & THEME
+       ========================================= */
       :root {
-        --bg-color: #f4f7f6;
-        --panel-color: #ffffff;
-        --slider-track: #d3d3d3;
-        --slider-thumb: #007bff;
-        --reset-color: #dc3545;
-        --pause-color: #17a2b8;
-        --go-color: #28a745;
-        --target-color: #e44d26;
-        --energy-color: #28a745;
-        --border-color: #dee2e6;
-        --text-color: #212529;
-        --label-color: #495057;
+        --bg-color: #f0f0f0;
+        --panel-bg: rgba(255, 255, 255, 0.95);
+        --text-color: #333;
+        --text-secondary: #666;
+        --input-border: #ccc;
+        --input-focus: #2196f3;
+        --shadow-color: rgba(0, 0, 0, 0.2);
+        --section-border: #ddd;
+        --burger-color: #333;
+
+        /* Couleurs spécifiques simulation */
+        --reset-color: #f44336;
+        --pause-color: #2196f3;
+        --go-color: #4caf50;
       }
 
+      /* =========================================
+       2. CONFIGURATION GÉNÉRALE
+       ========================================= */
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        overflow: hidden; /* Important : pas de scroll global */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        margin: 0;
-        min-height: 100vh;
-        padding: 10px;
-        box-sizing: border-box;
+        touch-action: none; /* Améliore la gestion tactile du canvas */
       }
 
-      .container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        width: 100%;
-        max-width: 1400px;
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      /* --- AFFICHAGE MOBILE --- */
-      #simulation-area {
+      #container {
         position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      /* =========================================
+       3. ZONE DE SIMULATION (CANVAS)
+       ========================================= */
+      #simulation-area {
         width: 100%;
-        height: 60vh;
-        background: var(--panel-color);
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        padding: 15px;
-        box-sizing: border-box;
+        height: 100%;
+        position: relative;
+        background: #fff;
       }
 
       #simCanvas {
+        display: block;
         width: 100%;
         height: 100%;
       }
 
-      /* Panneaux d'info pour MOBILE (visibles par défaut) */
-      #info-panels-mobile {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      #equation-display {
-        text-align: center;
-      }
-
-      #results-display,
-      #equation-display {
-        flex: 1 1 250px;
-        background-color: var(--panel-color);
-        padding: 5px 12px;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--border-color);
-        font-size: 0.85em;
-      }
-
-      #results-display ul {
-        list-style-type: "• ";
-        padding-left: 1em;
-        margin: 0;
-      }
-
-      #credits {
+      #graph-title {
+        position: absolute;
         width: 100%;
         text-align: center;
-        font-size: 0.7em;
-        color: #6c757d;
+        margin: 0;
+        pointer-events: none;
+        color: var(--text-secondary);
+        font-weight: 600;
+        z-index: 5;
+
+        /* Ajustement de l'interligne pour le saut de ligne */
+        line-height: 1.4;
+
+        /* Position mobile */
+        top: 60px; /* Un peu plus haut que 70px car le texte va grandir vers le bas */
+        font-size: 1em;
+        padding: 0 10px;
+        box-sizing: border-box;
       }
 
-      /* Panneaux flottants pour ORDINATEUR (cachés par défaut) */
-      #results-display-desktop,
-      #equation-display-desktop,
-      #credits-desktop {
-        display: none;
+      @media (min-width: 768px) {
+        #graph-title {
+          top: 15px;
+          font-size: 1.2em;
+          padding: 0 60px;
+        }
       }
 
-      #mobile-controls-overlay {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-      }
-
-      #mobile-controls-overlay button {
-        padding: 4px 16px;
-        font-size: 14px;
-        line-height: 1.5;
-        border: none;
-        border-radius: 8px;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      }
-
-      #mobileParamsButton {
-        background-color: var(--pause-color);
-      }
-
-      #mobileGoButton {
-        background-color: var(--go-color);
-      }
-
-      /* Panneau de contrôle mobile */
-      #controls-panel {
-        position: fixed;
+      /* =========================================
+       4. PANNEAU LATÉRAL
+       ========================================= */
+      #panel {
+        position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--panel-color);
-        z-index: 100;
-        transform: translateX(100%);
-        transition: transform 0.3s ease-in-out;
-        padding: 15px;
-        box-sizing: border-box;
+        height: 100vh;
+        width: 340px;
+        max-width: 85vw;
+        background: var(--panel-bg);
+        box-shadow: 2px 0 15px var(--shadow-color);
+        transform: translateX(-100%); /* Caché à gauche */
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: 1000;
         display: flex;
         flex-direction: column;
+        backdrop-filter: blur(5px);
       }
 
-      #controls-panel.panel-visible {
+      #panel.open {
         transform: translateX(0);
       }
 
-      #closePanelButton {
-        display: block;
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        border: none;
-        background-color: var(--go-color);
-        color: white;
-        font-size: 1.2em;
-        cursor: pointer;
+      #panelHeader {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--section-border);
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.02);
       }
 
-      .parameters-wrapper {
+      #panelContent {
         flex: 1;
         overflow-y: auto;
+        padding: 0 15px 20px 15px;
+        scrollbar-width: thin;
+      }
+
+      /* =========================================
+       5. BOUTON BURGER (OUVRIR)
+       ========================================= */
+      #openBtn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 999;
+        background: white;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px var(--shadow-color);
+        cursor: pointer;
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 5px;
+        transition: opacity 0.3s;
       }
 
-      h2 {
-        margin-top: 0;
-        text-align: center;
-        color: var(--slider-thumb);
-        flex-shrink: 0;
+      #openBtn.hidden {
+        opacity: 0;
+        pointer-events: none;
       }
 
-      .control-group label {
+      .burger-line {
+        width: 22px;
+        height: 2px;
+        background-color: var(--burger-color);
+        border-radius: 2px;
+      }
+
+      /* =========================================
+       6. SECTIONS PLIABLES
+       ========================================= */
+      .section {
+        border-bottom: 1px solid var(--section-border);
+        margin-bottom: 0;
+      }
+
+      .section-header {
+        padding: 15px 5px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 5px;
-        font-size: 0.9em;
-        color: var(--label-color);
-        flex-wrap: wrap;
+        user-select: none;
       }
 
-      .control-group input[type="range"] {
-        width: 100%;
-        cursor: pointer;
+      .section-header::after {
+        content: "▼";
+        font-size: 10px;
+        color: var(--text-secondary);
+        transition: transform 0.3s;
       }
 
-      .control-group input[type="number"] {
-        width: 60px;
-        text-align: right;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        padding: 2px 5px;
+      .section.collapsed .section-header::after {
+        transform: rotate(-90deg);
       }
 
-      .action-buttons {
-        border-top: 1px solid var(--border-color);
-        padding-top: 10px;
-        flex-shrink: 0;
-      }
-
-      .action-buttons #pauseButton {
+      .section.collapsed .section-content {
         display: none;
       }
 
-      #resetButton {
-        background-color: var(--reset-color);
-        padding: 10px;
-        border-radius: 5px;
-        color: white;
-        border: none;
-        font-weight: bold;
-
-        /* --- Lignes Corrigées --- */
-        display: block;
-        /* S'assurer que le bouton est traité comme un bloc */
-        width: 50%;
-        /* Ou la largeur que vous souhaitez */
-        margin: 0 auto;
-        /* La méthode infaillible pour centrer */
+      .section-content {
+        padding: 0 5px 15px 5px;
       }
 
-      #calculateButton {
+      /* =========================================
+       7. INPUTS & CONTROLES
+       ========================================= */
+      .control-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        color: var(--text-secondary);
+      }
+
+      input[type="number"] {
+        width: 60px;
+        padding: 4px;
+        border: 1px solid var(--input-border);
+        border-radius: 4px;
+        text-align: right;
+        font-size: 13px;
+      }
+
+      input[type="range"] {
         width: 100%;
-        padding: 12px;
-        background-color: var(--target-color);
-        color: white;
-        border: none;
-        border-radius: 5px;
+        margin-top: 5px;
         cursor: pointer;
-        font-weight: bold;
+      }
+
+      /* Boutons d'action */
+      .action-row {
+        display: flex;
+        gap: 10px;
         margin-top: 10px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.2s;
+      }
+      .btn:hover {
+        opacity: 0.9;
+      }
+
+      .btn-go {
+        background-color: var(--go-color);
+      }
+      .btn-reset {
+        background-color: var(--reset-color);
+      }
+      .btn-pause {
+        background-color: var(--pause-color);
+      }
+
+      /* Checkbox group */
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        font-size: 13px;
+      }
+      .checkbox-group label {
+        margin: 0;
+      }
+
+      /* Résultats */
+      #results-display,
+      #equation-display {
+        background: #f9f9f9;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #eee;
+        font-size: 12px;
+        line-height: 1.5;
       }
 
       #solutions-display button {
         width: 100%;
         padding: 8px;
-        margin-top: 8px;
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        border-radius: 5px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        background: #eee;
+        border-radius: 4px;
         cursor: pointer;
-        transition: background-color 0.2s;
       }
-
       #solutions-display button.selected-solution {
-        background-color: var(--go-color);
-        box-shadow: 0 0 8px rgba(40, 167, 69, 0.7);
-        font-weight: bold;
+        background: var(--go-color);
+        color: white;
+        border-color: var(--go-color);
       }
 
-      .action-buttons .checkbox-group label {
-        font-size: 0.9em;
-        /* Par exemple, pour le rendre un peu plus petit */
-        color: var(--label-color);
-        /* Pour lui donner une couleur grise comme les autres labels */
-        /* Vous pouvez ajouter d'autres styles ici, comme font-weight: bold; */
+      .hidden {
+        display: none !important;
       }
 
-      /* Style pour le titre du graphique */
-      #graph-title {
-        position: absolute;
-        top: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        /* Technique pour centrer parfaitement */
-        color: var(--label-color);
-        margin: 0;
-        font-size: 1em;
-        font-weight: 600;
+      /* Style désactivé */
+      .disabled-by-shape {
+        opacity: 0.5;
         pointer-events: none;
-        /* Pour que le titre ne bloque pas les clics */
-      }
-
-      /* Nouveau style pour les contrôles désactivés par la sélection de forme */
-      .control-group.disabled-by-shape label,
-      .control-group.disabled-by-shape input[type="number"],
-      .control-group.disabled-by-shape input[type="range"] {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-
-      .control-group.disabled-by-shape input[type="number"] {
-        background-color: #e9ecef;
-        /* Couleur de fond grisée pour l'input numérique */
-      }
-
-      /* ==========================================================================
-           2. MEDIA QUERY POUR GRAND ÉCRAN
-           ========================================================================== */
-      /* ==========================================================================
-   MEDIA QUERY POUR GRAND ÉCRAN (VERSION CORRIGÉE ET COMPLÈTE)
-   ========================================================================== */
-      @media (min-width: 768px) and (min-height: 500px) {
-        body {
-          align-items: center;
-          padding: 20px;
-        }
-
-        /* 1. Définir la grille principale (2 lignes, 2 colonnes) */
-        .container {
-          display: grid;
-          grid-template-columns: 1fr 320px;
-          grid-template-rows: 3fr 1fr;
-          /* <-- CORRECTION : Partage l'espace 75% / 25% */
-          align-items: stretch;
-          gap: 10px;
-          height: 95vh;
-        }
-
-        /* 2. Placer les éléments dans la grille */
-        #simulation-area {
-          grid-column: 1 / 2;
-          grid-row: 1 / 2;
-          height: auto;
-          /* <-- CORRECTION : Laisse la grille gérer la hauteur */
-        }
-
-        #controls-panel {
-          grid-column: 2 / 3;
-          /* Colonne de droite */
-          grid-row: 1 / 3;
-          /* S'étend sur les DEUX rangées */
-        }
-
-        /* 3. AFFICHER les panneaux d'info mobiles et les placer SOUS la simulation */
-        #info-panels-mobile {
-          display: flex;
-          grid-column: 1 / 2;
-          /* Colonne de gauche */
-          grid-row: 2 / 3;
-          /* Rangée du bas */
-          gap: 20px;
-          align-items: flex-start;
-        }
-
-        #credits {
-          display: block;
-          grid-column: 1 / 2;
-          /* Colonne de gauche */
-          grid-row: 2 / 3;
-          /* Rangée du bas */
-          align-self: end;
-          /* Se colle en bas de sa rangée */
-          text-align: left;
-          padding-bottom: 5px;
-          font-size: 10px;
-        }
-
-        /* 4. CACHER tous les éléments inutiles en mode ordinateur */
-        #mobile-controls-overlay,
-        #closePanelButton,
-        #results-display-desktop,
-        #equation-display-desktop,
-        #credits-desktop {
-          display: none;
-        }
-
-        /* 5. Restaurer le style du panneau de contrôle en barre latérale */
-        #controls-panel {
-          position: static;
-          transform: none;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        /* 6. Restaurer les boutons du panneau de contrôle */
-        .action-buttons {
-          display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          /* Go | Espace | Reset */
-          gap: 10px;
-        }
-
-        /* Règle de base pour TOUS les boutons en mode non-mobile */
-        .action-buttons button {
-          padding: 10px;
-          border: none;
-          border-radius: 5px;
-          color: white;
-          font-weight: bold;
-          cursor: pointer;
-          transition: opacity 0.2s;
-        }
-
-        .action-buttons button:hover {
-          opacity: 0.85;
-        }
-
-        /* Style spécifique pour le bouton Go / Pause */
-        .action-buttons #pauseButton {
-          display: block;
-          grid-column: 1 / 2;
-          background-color: var(--go-color);
-        }
-
-        /* Style spécifique pour le bouton Reset */
-        #resetButton {
-          grid-column: 3 / 4;
-          background-color: var(--reset-color);
-          width: auto;
-        }
-
-        .action-buttons button {
-          color: white;
-          font-weight: bold;
-        }
-
-        .action-buttons #pauseButton {
-          display: block;
-          grid-column: 1 / 2;
-          background-color: var(--go-color);
-        }
-
-        #resetButton {
-          grid-column: 3 / 4;
-          width: auto;
-        }
-
-        #graph-title {
-          font-size: 1.3em;
-          top: 20px;
-          /* Un peu plus de marge en haut */
-        }
       }
     </style>
   </head>
 
   <body>
-    <div class="container">
-      <!-- Zone de simulation avec ses panneaux flottants (pour ordinateur) -->
+    <!-- Bouton Burger -->
+    <button id="openBtn" onclick="togglePanel()">
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+    </button>
+
+    <div id="container">
+      <!-- Zone Canvas -->
       <div id="simulation-area">
         <h4 id="graph-title">Trajectoire du projectile</h4>
-        <!-- LIGNE AJOUTÉE -->
         <canvas id="simCanvas"></canvas>
-        <div id="results-display-desktop"></div>
-        <div id="equation-display-desktop"></div>
-        <div id="credits-desktop">© ESPARSA Michel - 03/11/2025</div>
       </div>
 
-      <!-- Conteneur pour les panneaux d'info (pour mobile) -->
-      <div id="info-panels-mobile">
-        <div id="results-display"></div>
-        <div id="equation-display"></div>
-      </div>
-
-      <!-- Boutons de contrôle mobiles -->
-      <div id="mobile-controls-overlay">
-        <button id="mobileParamsButton">Paramètres</button>
-        <button id="mobileGoButton">Go</button>
-      </div>
-
-      <!-- Crédits (pour mobile) -->
-      <div id="credits">© ESPARSA Michel - 03/11/2025</div>
-
-      <!-- Panneau de contrôle -->
-      <div id="controls-panel">
-        <button id="closePanelButton" aria-label="Fermer les paramètres">X</button>
-        <div class="parameters-wrapper">
-          <h2>Paramètres</h2>
-          <div class="mode-selector">
-            <label><input type="radio" name="mode" value="simulation" checked /> Simulation</label
-            ><label><input type="radio" name="mode" value="target" /> Cible</label>
-          </div>
-          <div id="simulation-controls">
-            <div class="control-group">
-              <label
-                >Vitesse (v₀):
-                <input type="number" id="v0Input" step="0.1" title="Vitesse initiale du projectile au moment du tir." />
-                m/s</label
-              >
-              <input
-                type="range"
-                id="v0Slider"
-                min="1"
-                max="50"
-                step="0.1"
-                value="20"
-                title="Ajuste la vitesse de lancement du projectile. Une vitesse plus élevée augmente la portée et la hauteur."
-              />
-            </div>
-
-            <div class="control-group">
-              <label>Angle (α): <input type="number" id="alphaInput" step="1" /> °</label
-              ><input type="range" id="alphaSlider" min="0" max="90" step="1" value="45" />
-            </div>
-          </div>
-
-          <div id="target-controls" class="hidden">
-            <h3>Mode Cible</h3>
-            <div class="control-group">
-              <label>Vitesse (v₀): <input type="number" id="v0TargetInput" step="0.1" /> m/s</label
-              ><input type="range" id="v0TargetSlider" min="1" max="50" step="0.1" value="20" />
-            </div>
-            <div class="control-group">
-              <label>Cible X:<input type="number" id="targetXInput" step="0.5" value="25" /> m</label>
-            </div>
-            <div class="control-group">
-              <label>Cible Y:<input type="number" id="targetYInput" step="0.5" value="10" /> m</label>
-            </div>
-            <div id="solutions-display"></div>
-          </div>
-
-          <div class="control-group">
-            <label for="resistanceCheckbox"
-              >Résistance de l'air (f ~ v² ou f ~ v)<input type="checkbox" id="resistanceCheckbox"
-            /></label>
-          </div>
-          <div id="resistance-params" class="hidden" style="border: 1px solid #999; padding: 10px; border-radius: 8px">
-            <div class="control-group">
-              <label>Rayon (r): <input type="number" id="radiusInput" step="0.01" /> m</label
-              ><input type="range" id="radiusSlider" min="0.01" max="0.5" step="0.01" value="0.05" />
-            </div>
-            <div class="control-group" id="dragCoeff-control">
-              <label>Coeff. traînée (Cx): <input type="number" id="dragCoeffInput" step="0.01" /></label
-              ><input type="range" id="dragCoeffSlider" min="0.01" max="1.5" step="0.01" value="0.47" />
-            </div>
-
-            <!-- Dans la div #resistance-params -->
-            <div class="control-group">
-              <label style="margin-bottom: 8px">Forme du projectile :</label>
-              <div style="display: flex; gap: 15px">
-                <label>
-                  <input type="radio" name="projectileShape" value="sphere" checked />
-                  Sphère
-                </label>
-                <label>
-                  <input type="radio" name="projectileShape" value="cylinder" />
-                  Cylindre
-                </label>
-                <label>
-                  <input type="radio" name="projectileShape" value="bullet" />
-                  Balle
-                </label>
-                <label>
-                  <input type="radio" name="projectileShape" value="custom" />
-                  Personnalisée
-                </label>
-              </div>
-            </div>
-            <!-- Le reste de vos contrôles de résistance (radius, dragCoeff, dragModel) -->
-
-            <!-- NOUVEAU : Sélection du modèle de frottement -->
-            <div class="control-group" style="margin-top: 15px">
-              <label style="margin-bottom: 8px">Modèle de Frottement :</label>
-              <div style="display: flex; gap: 15px">
-                <label>
-                  <input type="radio" name="dragModel" value="quadratic" checked />
-                  Quadratique (f ~ v²)
-                </label>
-                <label>
-                  <input type="radio" name="dragModel" value="linear" />
-                  Linéaire (f ~ v)
-                </label>
-              </div>
-            </div>
-            <!-- FIN NOUVEAU -->
-
-            <div class="control-group" style="padding-top: 10px; border-top: 1px solid #eee; margin-top: 5px">
-              <label for="compareIdealCheckbox"
-                >Afficher la trajectoire idéale<input type="checkbox" id="compareIdealCheckbox" checked
-              /></label>
-            </div>
-          </div>
-          <!-- APRÈS -->
-          <div id="common-controls">
-            <div class="control-group">
-              <label>H. départ (h_d): <input type="number" id="hInput" step="0.5" /> m</label
-              ><input type="range" id="hSlider" min="0" max="50" step="0.5" value="0" />
-            </div>
-            <div id="h-arrivee-control" class="control-group">
-              <label>H. arrivée (h_a): <input type="number" id="hArriveeInput" step="0.5" /> m</label
-              ><input type="range" id="hArriveeSlider" min="0" max="50" step="0.5" value="0" />
-            </div>
-            <div id="mass-control" class="control-group">
-              <label>Masse (m):<input type="number" id="mInput" min="0.1" max="100" step="0.1" /> kg</label
-              ><input type="range" id="mSlider" min="0.1" max="100" step="0.1" value="1.0" />
-            </div>
-          </div>
-          <div class="control-group">
-            <label>Gravité (g): <input type="number" id="gInput" step="0.01" /> m/s²</label
-            ><input type="range" id="gSlider" min="1" max="25" step="0.01" value="9.81" />
-          </div>
-          <div class="control-group">
-            <label>Vitesse d'animation: <span id="speedValue">1.0x</span></label
-            ><input type="range" id="speedSlider" min="0.1" max="2" step="0.1" value="1.0" />
-          </div>
-        </div>
-        <div class="action-buttons">
-          <!-- Contrôle de vecteurs de vitesse déplacé plus bas avec plus d'options -->
-          <div id="enveloppe-checkbox-container" class="checkbox-group" style="grid-column: 1 / -1">
-            <input type="checkbox" id="enveloppeCheckbox" checked /><label for="enveloppeCheckbox"
-              >Afficher l'Enveloppe</label
-            >
-          </div>
-          <div
-            id="velocity-vectors-container"
-            class="checkbox-group"
-            style="grid-column: 1 / -1; margin-top: 10px; border-top: 1px solid #dee2e6; padding-top: 10px"
+      <!-- PANNEAU LATÉRAL -->
+      <div id="panel">
+        <div id="panelHeader">
+          <button
+            onclick="togglePanel()"
+            style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666"
+            title="Fermer"
           >
-            <input type="checkbox" id="velocityVectorsCheckbox" checked />
-            <label for="velocityVectorsCheckbox">Afficher les vecteurs vitesse</label>
+            ✕
+          </button>
+        </div>
 
-            <div id="velocity-options" class="hidden" style="margin-left: 20px; margin-top: 8px">
-              <label style="display: block; margin-bottom: 5px">
-                <input type="checkbox" id="showComponentsCheckbox" checked />
-                Afficher les composantes vₓ et vᵧ
-              </label>
-              <label style="display: block">
-                <input type="checkbox" id="showVelocityValuesCheckbox" checked />
-                Afficher les valeurs numériques
-              </label>
+        <div id="panelContent">
+          <!-- SECTION 1: MODES & ACTIONS -->
+          <div class="section collapsible">
+            <div class="section-header">⚙️ Contrôles Principaux</div>
+            <div class="section-content">
+              <div class="mode-selector" style="margin-bottom: 15px; display: flex; gap: 15px">
+                <label style="margin: 0; cursor: pointer"
+                  ><input type="radio" name="mode" value="simulation" checked /> Simulation</label
+                >
+                <label style="margin: 0; cursor: pointer"
+                  ><input type="radio" name="mode" value="target" /> Cible</label
+                >
+              </div>
+
+              <div class="action-row">
+                <button id="pauseButton" class="btn btn-go">Go</button>
+                <button id="resetButton" class="btn btn-reset">Reset</button>
+              </div>
+
+              <!-- Boutons mobile Go cachés, on utilise ceux ci-dessus -->
+              <button id="mobileParamsButton" class="hidden"></button>
+              <button id="mobileGoButton" class="hidden"></button>
             </div>
           </div>
 
-          <button id="pauseButton">Go</button><button id="resetButton">Reset</button>
+          <!-- SECTION 2: LANCEMENT -->
+          <div class="section collapsible">
+            <div class="section-header">🚀 Paramètres de Tir</div>
+            <div class="section-content">
+              <!-- Mode Simulation -->
+              <div id="simulation-controls">
+                <div class="control-group">
+                  <label>Vitesse (v₀): <input type="number" id="v0Input" /> m/s</label>
+                  <input type="range" id="v0Slider" min="1" max="50" step="0.1" value="20" />
+                </div>
+                <div class="control-group">
+                  <label>Angle (α): <input type="number" id="alphaInput" /> °</label>
+                  <input type="range" id="alphaSlider" min="0" max="90" step="1" value="45" />
+                </div>
+              </div>
+
+              <!-- Mode Cible -->
+              <div id="target-controls" class="hidden">
+                <div class="control-group">
+                  <label>Vitesse (v₀): <input type="number" id="v0TargetInput" /> m/s</label>
+                  <input type="range" id="v0TargetSlider" min="1" max="50" step="0.1" value="20" />
+                </div>
+                <div class="control-group">
+                  <label>Cible X (m): <input type="number" id="targetXInput" step="0.5" value="25" /></label>
+                </div>
+                <div class="control-group">
+                  <label>Cible Y (m): <input type="number" id="targetYInput" step="0.5" value="10" /></label>
+                </div>
+                <div id="solutions-display"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: ENVIRONNEMENT -->
+          <div class="section collapsible collapsed">
+            <div class="section-header">🌍 Environnement & Physique</div>
+            <div class="section-content">
+              <div id="common-controls">
+                <div class="control-group">
+                  <label>Hauteur départ (h): <input type="number" id="hInput" /></label>
+                  <input type="range" id="hSlider" min="0" max="50" step="0.5" value="0" />
+                </div>
+
+                <div id="h-arrivee-control" class="control-group">
+                  <label>Hauteur arrivée: <input type="number" id="hArriveeInput" /></label>
+                  <input type="range" id="hArriveeSlider" min="0" max="50" step="0.5" value="0" />
+                </div>
+
+                <div class="control-group">
+                  <label>Gravité (g): <input type="number" id="gInput" /></label>
+                  <input type="range" id="gSlider" min="1" max="25" step="0.01" value="9.81" />
+                </div>
+
+                <div id="mass-control" class="control-group">
+                  <label>Masse (m): <input type="number" id="mInput" /></label>
+                  <input type="range" id="mSlider" min="0.1" max="100" step="0.1" value="1.0" />
+                </div>
+              </div>
+
+              <!-- Frottements -->
+              <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px">
+                <label style="cursor: pointer; font-weight: bold">
+                  <input type="checkbox" id="resistanceCheckbox" style="margin-right: 8px" /> Résistance de l'air
+                </label>
+              </div>
+
+              <div id="resistance-params" class="hidden" style="background: #f5f5f5; padding: 10px; border-radius: 6px">
+                <!-- Forme -->
+                <div class="control-group">
+                  <label style="margin-bottom: 5px">Forme :</label>
+                  <div style="font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px">
+                    <label><input type="radio" name="projectileShape" value="sphere" checked /> Sphère</label>
+                    <label><input type="radio" name="projectileShape" value="cylinder" /> Cylindre</label>
+                    <label><input type="radio" name="projectileShape" value="bullet" /> Balle</label>
+                    <label><input type="radio" name="projectileShape" value="custom" /> Custom</label>
+                  </div>
+                </div>
+
+                <div class="control-group" id="dragCoeff-control">
+                  <label>Coeff. (Cx): <input type="number" id="dragCoeffInput" /></label>
+                  <input type="range" id="dragCoeffSlider" min="0.01" max="1.5" step="0.01" />
+                </div>
+
+                <div class="control-group">
+                  <label>Rayon (r): <input type="number" id="radiusInput" /></label>
+                  <input type="range" id="radiusSlider" min="0.01" max="0.5" step="0.01" value="0.05" />
+                </div>
+
+                <div class="control-group">
+                  <label style="margin-bottom: 5px">Modèle :</label>
+                  <div style="font-size: 11px; display: flex; gap: 10px">
+                    <label><input type="radio" name="dragModel" value="quadratic" checked /> f ~ v²</label>
+                    <label><input type="radio" name="dragModel" value="linear" /> f ~ v</label>
+                  </div>
+                </div>
+
+                <label style="font-size: 11px; margin-top: 5px">
+                  <input type="checkbox" id="compareIdealCheckbox" checked /> Comparer trajectoire idéale
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 4: AFFICHAGE -->
+          <div class="section collapsible collapsed">
+            <div class="section-header">👁️ Affichage & Animation</div>
+            <div class="section-content">
+              <div class="control-group">
+                <label>Vitesse anim: <span id="speedValue">1.0x</span></label>
+                <input type="range" id="speedSlider" min="0.1" max="2" step="0.1" value="1.0" />
+              </div>
+
+              <div id="enveloppe-checkbox-container" class="checkbox-group">
+                <input type="checkbox" id="enveloppeCheckbox" checked />
+                <label for="enveloppeCheckbox">Afficher l'Enveloppe</label>
+              </div>
+
+              <div id="velocity-vectors-container" style="margin-top: 10px">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="velocityVectorsCheckbox" checked />
+                  <label for="velocityVectorsCheckbox">Vecteurs Vitesse</label>
+                </div>
+
+                <div id="velocity-options" style="margin-left: 20px; font-size: 11px; color: #666">
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="showComponentsCheckbox" checked />
+                    <label>Composantes Vx / Vy</label>
+                  </div>
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="showVelocityValuesCheckbox" checked />
+                    <label>Valeurs numériques</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 5: RÉSULTATS -->
+          <div class="section collapsible">
+            <div class="section-header">📊 Résultats</div>
+            <div class="section-content">
+              <div id="results-display"></div>
+              <div id="equation-display" style="margin-top: 10px"></div>
+            </div>
+          </div>
+
+          <div style="font-size: 10px; color: #999; text-align: center; margin-top: 20px">
+            © ESPARSA Michel - 03/11/2025
+          </div>
         </div>
       </div>
+
+      <!-- Éléments desktop cachés car intégrés au panel -->
+      <div id="results-display-desktop" class="hidden"></div>
+      <div id="equation-display-desktop" class="hidden"></div>
+      <div id="credits-desktop" class="hidden"></div>
+      <button id="closePanelButton" class="hidden"></button>
     </div>
 
     <script>
+      /* =========================================================================
+         LOGIQUE UI : PANNEAU RÉTRACTABLE & GESTES
+         ========================================================================= */
+
+      let panelOpen = false;
+      const panel = document.getElementById("panel");
+      const openBtn = document.getElementById("openBtn");
+
+      // 1. Ouvrir / Fermer
+      function togglePanel() {
+        panelOpen = !panelOpen;
+        if (panelOpen) {
+          panel.classList.add("open");
+          openBtn.classList.add("hidden");
+        } else {
+          panel.classList.remove("open");
+          openBtn.classList.remove("hidden");
+        }
+      }
+
+      // Fonction pour forcer l'ouverture
+      function openPanel() {
+        if (!panelOpen) {
+          togglePanel();
+        }
+      }
+
+      // Fonction pour forcer la fermeture
+      function closePanel() {
+        if (panelOpen) {
+          togglePanel();
+        }
+      }
+
+      // 2. Sections Pliables
+      document.addEventListener("DOMContentLoaded", () => {
+        const headers = document.querySelectorAll(".section-header");
+        headers.forEach((header) => {
+          header.addEventListener("click", () => {
+            const section = header.parentElement;
+            section.classList.toggle("collapsed");
+          });
+        });
+      });
+
+      // 3. Swipe Tactile
+      let touchstartX = 0;
+      let touchstartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+      const SWIPE_THRESHOLD = 50;
+
+      document.addEventListener(
+        "touchstart",
+        function (event) {
+          // On ignore si on touche le slider ou le canvas directement si on veut draguer la cible
+          // Mais ici on veut détecter le swipe global
+          touchstartX = event.changedTouches[0].screenX;
+          touchstartY = event.changedTouches[0].screenY;
+        },
+        { passive: false }
+      );
+
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          touchEndX = event.changedTouches[0].screenX;
+          touchEndY = event.changedTouches[0].screenY;
+          handleSwipe(event);
+        },
+        { passive: false }
+      );
+
+      function handleSwipe(e) {
+        // Si on interactue avec un slider, on évite le swipe panel
+        if (e.target.type === "range") return;
+
+        const diffX = touchEndX - touchstartX;
+        const diffY = touchEndY - touchstartY;
+
+        // Mouvement horizontal dominant
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          // Ouvrir (Swipe Droite depuis le bord gauche)
+          if (diffX > SWIPE_THRESHOLD && touchstartX < 50 && !panelOpen) {
+            togglePanel();
+          }
+          // Fermer (Swipe Gauche n'importe où sur le panel)
+          if (diffX < -SWIPE_THRESHOLD && panelOpen) {
+            togglePanel();
+          }
+        }
+      }
+
+      /* =========================================================================
+         CODE DE SIMULATION PHYSIQUE (INCHANGÉ)
+         ========================================================================= */
+
       // Récupération des éléments DOM
       const canvas = document.getElementById("simCanvas");
       const ctx = canvas.getContext("2d");
       const resultsDisplay = document.getElementById("results-display");
-      const resultsDisplayDesktop = document.getElementById("results-display-desktop");
+      const resultsDisplayDesktop = document.getElementById("results-display-desktop"); // Gardé pour compatibilité JS
       const equationDisplay = document.getElementById("equation-display");
-      const equationDisplayDesktop = document.getElementById("equation-display-desktop");
+      const equationDisplayDesktop = document.getElementById("equation-display-desktop"); // Gardé pour compatibilité JS
+
+      // Boutons mobiles simulés pour compatibilité
       const mobileParamsButton = document.getElementById("mobileParamsButton");
       const mobileGoButton = document.getElementById("mobileGoButton");
       const closePanelButton = document.getElementById("closePanelButton");
-      const controlsPanel = document.getElementById("controls-panel");
+
+      const controlsPanel = document.getElementById("panel"); // Anciennement controls-panel
       const resistanceCheckbox = document.getElementById("resistanceCheckbox");
       const resistanceParamsDiv = document.getElementById("resistance-params");
       const enveloppeCheckboxContainer = document.getElementById("enveloppe-checkbox-container");
+
       const sliders = {
         v0: document.getElementById("v0Slider"),
         alpha: document.getElementById("alphaSlider"),
@@ -930,8 +922,7 @@
         canvas.width = Math.round(rect.width * dpr);
         canvas.height = Math.round(rect.height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        canvas.style.width = rect.width + "px";
-        canvas.style.height = rect.height + "px";
+        // On ne force plus le style width/height ici, le CSS s'en charge (100%)
       }
 
       // Définit la transformation monde->écran
@@ -1576,11 +1567,16 @@
           state.isResistanceActive = resistanceCheckbox.checked;
 
           const graphTitle = document.getElementById("graph-title");
+
           if (state.isResistanceActive) {
             const modelText = state.dragModel === "quadratic" ? "(f ~ v²)" : "(f ~ v)";
-            graphTitle.textContent = `Trajectoire du projectile (avec frottement air ${modelText})`;
+            // Utilisation de innerHTML pour le saut de ligne <br>
+            // Et un span pour rendre la deuxième ligne moins "lourde" visuellement
+            graphTitle.innerHTML = `Trajectoire du projectile<br>
+                                    <span style="font-weight:normal; font-size:0.9em;">(avec frottement air ${modelText})</span>`;
           } else {
-            graphTitle.textContent = "Trajectoire du projectile (sans frottement air)";
+            graphTitle.innerHTML = `Trajectoire du projectile<br>
+                                    <span style="font-weight:normal; font-size:0.9em;">(sans frottement air)</span>`;
           }
 
           if (state.mode === "simulation") {
@@ -1683,8 +1679,8 @@
           state.animationId = null;
           pauseButton.textContent = "Go";
           mobileGoButton.textContent = "Go";
-          pauseButton.style.backgroundColor = "var(--go-color)";
-          mobileGoButton.style.backgroundColor = "var(--go-color)";
+          pauseButton.classList.remove("btn-pause");
+          pauseButton.classList.add("btn-go");
           draw();
         } finally {
           state.isUpdating = false;
@@ -1692,46 +1688,76 @@
       }
 
       // Animation basée sur frames
+      // Animation basée sur frames
       function animationLoop() {
         if (state.isPaused) return;
+
+        // Déterminer la longueur de l'animation selon le mode (une ou deux trajectoires)
         let maxFrames = state.isDualTrajectoryMode
           ? Math.max(state.trajectoire1.length, state.trajectoire2.length)
           : state.trajectoire.length;
+
+        // --- VÉRIFICATION DE LA FIN DE L'ANIMATION ---
         if (state.currentFrameIndex >= maxFrames - 1) {
+          // 1. Caler sur la dernière frame
           state.currentFrameIndex = maxFrames - 1;
+
+          // 2. Arrêter la boucle
           cancelAnimationFrame(state.animationId);
           state.animationId = null;
           state.isPaused = true;
+
+          // 3. Réinitialiser l'état des boutons (Remettre sur "Go")
           pauseButton.textContent = "Go";
           mobileGoButton.textContent = "Go";
-          pauseButton.style.backgroundColor = "var(--go-color)";
-          mobileGoButton.style.backgroundColor = "var(--go-color)";
-          if (state.mode === "target") updateTargetModeDisplays();
-          else updateResultsText("✓ Terminé");
+          pauseButton.classList.remove("btn-pause");
+          pauseButton.classList.add("btn-go");
+
+          // 4. Mettre à jour les résultats finaux
+          if (state.mode === "target") {
+            updateTargetModeDisplays();
+          } else {
+            updateResultsText("✓ Terminé");
+          }
+
+          // 5. RÉOUVRIR LE PANNEAU AUTOMATIQUEMENT (La modification demandée)
+          openPanel();
+
+          // 6. Dessiner la dernière image et sortir
           draw();
           return;
         }
 
+        // --- CONTINUATION DE L'ANIMATION ---
+
+        // Avancer l'index selon le facteur de vitesse
         state.currentFrameIndex += state.speedFactor;
 
+        // Mise à jour des données temps réel (Ec, Ep, Position)
         if (state.mode === "simulation") {
           const frameIndex = Math.floor(state.currentFrameIndex);
           const t = frameIndex * DT;
           const frame = state.trajectoire[frameIndex];
+
           if (frame) {
             const Ep = state.m * state.g * frame.y;
+            // Calcul approximatif de l'énergie cinétique restante
             const Ec_approx = state.eInitiale - Ep > 0 ? state.eInitiale - Ep : 0;
+
             updateResultsText(
-              `<b>t = ${t.toFixed(2)}s</b>, x = ${frame.x.toFixed(1)}m, y = ${frame.y.toFixed(
-                1
-              )}m<div id="energy-display"><ul><li>Ec : <b>~${Ec_approx.toFixed(1)} J</b></li><li>Ep : <b>${Ep.toFixed(
-                1
-              )} J</b></li></ul></div>`
+              `<b>t = ${t.toFixed(2)}s</b>, x = ${frame.x.toFixed(1)}m, y = ${frame.y.toFixed(1)}m` +
+                `<div id="energy-display"><ul>` +
+                `<li>Ec : <b>~${Ec_approx.toFixed(1)} J</b></li>` +
+                `<li>Ep : <b>${Ep.toFixed(1)} J</b></li>` +
+                `</ul></div>`
             );
           }
         }
 
+        // Dessiner la frame actuelle
         draw();
+
+        // Demander la frame suivante
         state.animationId = requestAnimationFrame(animationLoop);
       }
 
@@ -1829,27 +1855,37 @@
       function toggleAnimation() {
         if (state.mode === "target" && state.solutions.length === 0) return;
         if (state.mode === "simulation" && state.dureeVol <= 0) return;
+
         if (state.isPaused) {
           let maxFrames = state.isDualTrajectoryMode
             ? Math.max(state.trajectoire1.length, state.trajectoire2.length)
             : state.trajectoire.length;
+          // Si on relance une animation terminée, on repart du début
           if (state.currentFrameIndex >= maxFrames - 1 && maxFrames > 0) state.currentFrameIndex = 0;
           state.showFinalTrajectory = true;
         }
 
         state.isPaused = !state.isPaused;
+
         if (state.isPaused) {
+          // === CAS PAUSE ===
           cancelAnimationFrame(state.animationId);
           pauseButton.textContent = "Resume";
           mobileGoButton.textContent = "Resume";
-          pauseButton.style.backgroundColor = "var(--go-color)";
-          mobileGoButton.style.backgroundColor = "var(--go-color)";
+          pauseButton.classList.remove("btn-pause");
+          pauseButton.classList.add("btn-go");
+
+          openPanel(); // <--- AJOUT : On rouvre le panneau pour voir les réglages
         } else {
+          // === CAS LECTURE (GO) ===
           state.startTime = Date.now();
           pauseButton.textContent = "Pause";
           mobileGoButton.textContent = "Pause";
-          pauseButton.style.backgroundColor = "var(--pause-color)";
-          mobileGoButton.style.backgroundColor = "var(--pause-color)";
+          pauseButton.classList.remove("btn-go");
+          pauseButton.classList.add("btn-pause");
+
+          closePanel(); // <--- AJOUT : On ferme le panneau pour voir la simulation
+
           animationLoop();
         }
       }
@@ -1888,17 +1924,16 @@
         state.dragModel = "quadratic";
         document.querySelector('input[name="dragModel"][value="quadratic"]').checked = true;
         state.positions = [];
-        // NOUVEAU : Réinitialisation de la forme du projectile
         document.querySelector('input[name="projectileShape"][value="sphere"]').checked = true;
-        state.projectileShape = "sphere"; // Réinitialise l'état interne
-        // Appel pour s'assurer que le Cx est mis à jour et le contrôle désactivé
+        state.projectileShape = "sphere";
+
         const dragCoeffControl = document.getElementById("dragCoeff-control");
-        dragCoeffControl.classList.add("disabled-by-shape"); // Gérer la classe CSS
-        inputs.dragCoeff.disabled = true; // Désactiver l'input
-        sliders.dragCoeff.disabled = true; // Désactiver le slider
-        state.dragCoeff = DRAG_COEFF_PRESETS.sphere; // Appliquer le Cx de la sphère
-        inputs.dragCoeff.value = state.dragCoeff.toFixed(2); // Mettre à jour l'affichage
-        sliders.dragCoeff.value = state.dragCoeff; // Mettre à jour le slider
+        dragCoeffControl.classList.add("disabled-by-shape");
+        inputs.dragCoeff.disabled = true;
+        sliders.dragCoeff.disabled = true;
+        state.dragCoeff = DRAG_COEFF_PRESETS.sphere;
+        inputs.dragCoeff.value = state.dragCoeff.toFixed(2);
+        sliders.dragCoeff.value = state.dragCoeff;
 
         const currentMode = state.mode;
         setMode(currentMode);
@@ -2063,9 +2098,9 @@
           { passive: true }
         );
 
-        mobileParamsButton.addEventListener("click", () => controlsPanel.classList.add("panel-visible"));
-        closePanelButton.addEventListener("click", () => controlsPanel.classList.remove("panel-visible"));
-        mobileGoButton.addEventListener("click", toggleAnimation);
+        // mobileParamsButton.addEventListener("click", () => controlsPanel.classList.add("panel-visible")); // Plus utilisé
+        // closePanelButton.addEventListener("click", () => controlsPanel.classList.remove("panel-visible")); // Plus utilisé
+        // mobileGoButton.addEventListener("click", toggleAnimation); // Plus utilisé
 
         const onPointerDown = (e) => {
           if (typeof e.button !== "undefined" && e.button !== 0) return;
@@ -2108,19 +2143,16 @@
         document.getElementById("velocity-options").classList.toggle("hidden", !state.showVelocityVectors);
 
         const projectileShapeRadios = document.querySelectorAll('input[name="projectileShape"]');
-        const dragCoeffControl = document.getElementById("dragCoeff-control"); // La div du Cx
+        const dragCoeffControl = document.getElementById("dragCoeff-control");
 
         const updateDragCoeffFromShape = () => {
           state.projectileShape = document.querySelector('input[name="projectileShape"]:checked').value;
 
           if (state.projectileShape === "custom") {
-            // L'utilisateur contrôle le Cx
             dragCoeffControl.classList.remove("disabled-by-shape");
             inputs.dragCoeff.disabled = false;
             sliders.dragCoeff.disabled = false;
-            // Ne pas changer state.dragCoeff ici, il est déjà à la valeur de l'input
           } else {
-            // Cx est défini par la forme prédéfinie
             dragCoeffControl.classList.add("disabled-by-shape");
             inputs.dragCoeff.disabled = true;
             sliders.dragCoeff.disabled = true;
@@ -2128,17 +2160,15 @@
             inputs.dragCoeff.value = state.dragCoeff.toFixed(2);
             sliders.dragCoeff.value = state.dragCoeff;
           }
-          update(); // Recalculer la trajectoire avec le nouveau Cx (ou l'ancien si custom)
+          update();
         };
 
         projectileShapeRadios.forEach((radio) => {
           radio.addEventListener("change", updateDragCoeffFromShape);
         });
 
-        // ... (Assurez-vous que linkSliderInput est toujours appelé pour dragCoeff pour le mode custom)
         linkSliderInput(sliders.dragCoeff, inputs.dragCoeff, update);
 
-        // NOUVEAU : Initialise l'état de la sélection de forme et du Cx au chargement de la page
         updateDragCoeffFromShape();
       }
 
@@ -2167,7 +2197,6 @@
         ctx.lineWidth = 1;
         ctx.setLineDash([6, 4]);
 
-        // lignes verticales et horizontales pointillées
         ctx.beginPath();
         ctx.moveTo(top.tx, top.ty);
         ctx.lineTo(bottom.tx, bottom.ty);
@@ -2179,13 +2208,11 @@
 
         ctx.setLineDash([]);
 
-        // Labels pour abscisse et ordonnée (fond blanc semi-opaque + bord léger)
         const fontSize = 10;
         const padding = 4;
         ctx.font = `${fontSize}px Arial`;
         ctx.textBaseline = "middle";
 
-        // Label X (sous l'axe X, centré sur la verticale)
         const xLabel = `${x.toFixed(2)}m`;
         ctx.textAlign = "center";
         const xLabelWidth = ctx.measureText(xLabel).width;
@@ -2200,7 +2227,6 @@
         ctx.fillStyle = "black";
         ctx.fillText(xLabel, bottom.tx, rectY + rectH / 2);
 
-        // Label Y (à gauche de l'axe Y, aligné verticalement au niveau de la horizontale)
         const yLabel = `${y.toFixed(2)}m`;
         ctx.textAlign = "right";
         const yLabelWidth = ctx.measureText(yLabel).width;
@@ -2213,7 +2239,6 @@
         ctx.strokeStyle = "rgba(0,0,0,0.12)";
         ctx.strokeRect(rectX2, rectY2, rectW2, rectH2);
         ctx.fillStyle = "black";
-        // texte aligné juste à l'intérieur du rectangle
         ctx.fillText(yLabel, rectX2 + rectW2 - padding, left.ty);
 
         ctx.restore();
