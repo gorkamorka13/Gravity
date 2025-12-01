@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Simulateur de Mouvement Parabolique</title>
-    <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
     <style>
       /* =========================================
        1. VARIABLES & THEME
        ========================================= */
       :root {
+        /* Thème CLAIR (Par défaut) */
         --bg-color: #f0f0f0;
         --panel-bg: rgba(255, 255, 255, 0.95);
         --text-color: #333;
@@ -19,6 +19,8 @@
         --shadow-color: rgba(0, 0, 0, 0.2);
         --section-border: #ddd;
         --burger-color: #333;
+        --canvas-bg: #fff;
+        --result-bg: #f9f9f9;
 
         /* Couleurs spécifiques simulation */
         --reset-color: #f44336;
@@ -26,16 +28,31 @@
         --go-color: #4caf50;
       }
 
+      /* Thème SOMBRE */
+      [data-theme="dark"] {
+        --bg-color: #121212;
+        --panel-bg: rgba(30, 30, 30, 0.95);
+        --text-color: #e0e0e0;
+        --text-secondary: #aaa;
+        --input-border: #555;
+        --input-focus: #64b5f6;
+        --shadow-color: rgba(0, 0, 0, 0.6);
+        --section-border: #444;
+        --burger-color: #fff;
+        --canvas-bg: #1e1e1e;
+        --result-bg: #252525;
+      }
+
       /* =========================================
        2. CONFIGURATION GÉNÉRALE
        ========================================= */
       body {
         margin: 0;
-        overflow: hidden; /* Important : pas de scroll global */
+        overflow: hidden;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
-        touch-action: none; /* Améliore la gestion tactile du canvas */
+        touch-action: none;
       }
 
       #container {
@@ -51,7 +68,8 @@
         width: 100%;
         height: 100%;
         position: relative;
-        background: #fff;
+        background: var(--canvas-bg);
+        transition: background-color 0.3s;
       }
 
       #simCanvas {
@@ -69,12 +87,8 @@
         color: var(--text-secondary);
         font-weight: 600;
         z-index: 5;
-
-        /* Ajustement de l'interligne pour le saut de ligne */
         line-height: 1.4;
-
-        /* Position mobile */
-        top: 60px; /* Un peu plus haut que 70px car le texte va grandir vers le bas */
+        top: 60px;
         font-size: 1em;
         padding: 0 10px;
         box-sizing: border-box;
@@ -100,7 +114,7 @@
         max-width: 85vw;
         background: var(--panel-bg);
         box-shadow: 2px 0 15px var(--shadow-color);
-        transform: translateX(-100%); /* Caché à gauche */
+        transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 1000;
         display: flex;
@@ -121,6 +135,10 @@
         background: rgba(0, 0, 0, 0.02);
       }
 
+      [data-theme="dark"] #panelHeader {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
       #panelContent {
         flex: 1;
         overflow-y: auto;
@@ -129,14 +147,14 @@
       }
 
       /* =========================================
-       5. BOUTON BURGER (OUVRIR)
+       5. BOUTON BURGER & ICONES
        ========================================= */
       #openBtn {
         position: absolute;
         top: 20px;
         left: 20px;
         z-index: 999;
-        background: white;
+        background: var(--panel-bg);
         border: none;
         padding: 10px;
         border-radius: 8px;
@@ -158,6 +176,25 @@
         height: 2px;
         background-color: var(--burger-color);
         border-radius: 2px;
+      }
+
+      /* Style boutons icones (Fermer / Theme) */
+      .icon-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+      }
+      .icon-btn:hover {
+        background-color: rgba(128, 128, 128, 0.1);
+        color: var(--text-color);
       }
 
       /* =========================================
@@ -221,6 +258,8 @@
         border-radius: 4px;
         text-align: right;
         font-size: 13px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
       }
 
       input[type="range"] {
@@ -270,28 +309,34 @@
         gap: 8px;
         margin-top: 8px;
         font-size: 13px;
+        color: var(--text-color);
       }
       .checkbox-group label {
         margin: 0;
+        color: var(--text-color);
       }
 
       /* Résultats */
       #results-display,
-      #equation-display {
-        background: #f9f9f9;
+      #equation-display,
+      #resistance-params,
+      #solutions-display {
+        background: var(--result-bg);
         padding: 10px;
         border-radius: 6px;
-        border: 1px solid #eee;
+        border: 1px solid var(--section-border);
         font-size: 12px;
         line-height: 1.5;
+        color: var(--text-color);
       }
 
       #solutions-display button {
         width: 100%;
         padding: 8px;
         margin-top: 5px;
-        border: 1px solid #ccc;
-        background: #eee;
+        border: 1px solid var(--input-border);
+        background: var(--bg-color);
+        color: var(--text-color);
         border-radius: 4px;
         cursor: pointer;
       }
@@ -331,13 +376,19 @@
       <!-- PANNEAU LATÉRAL -->
       <div id="panel">
         <div id="panelHeader">
+          <!-- Bouton Thème -->
           <button
-            onclick="togglePanel()"
-            style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666"
-            title="Fermer"
+            id="themeToggleBtn"
+            class="icon-btn"
+            onclick="toggleTheme()"
+            title="Changer de thème"
+            style="margin-right: 15px"
           >
-            ✕
+            ☀️
           </button>
+
+          <!-- Bouton Fermer (Croix) -->
+          <button onclick="togglePanel()" class="icon-btn" style="font-size: 24px" title="Fermer">✕</button>
         </div>
 
         <div id="panelContent">
@@ -345,11 +396,14 @@
           <div class="section collapsible">
             <div class="section-header">⚙️ Contrôles Principaux</div>
             <div class="section-content">
-              <div class="mode-selector" style="margin-bottom: 15px; display: flex; gap: 15px">
-                <label style="margin: 0; cursor: pointer"
+              <div
+                class="mode-selector"
+                style="margin-bottom: 15px; display: flex; gap: 15px; color: var(--text-color)"
+              >
+                <label style="margin: 0; cursor: pointer; color: var(--text-color)"
                   ><input type="radio" name="mode" value="simulation" checked /> Simulation</label
                 >
-                <label style="margin: 0; cursor: pointer"
+                <label style="margin: 0; cursor: pointer; color: var(--text-color)"
                   ><input type="radio" name="mode" value="target" /> Cible</label
                 >
               </div>
@@ -425,21 +479,29 @@
               </div>
 
               <!-- Frottements -->
-              <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px">
-                <label style="cursor: pointer; font-weight: bold">
+              <div class="control-group" style="border-top: 1px solid var(--section-border); padding-top: 10px">
+                <label style="cursor: pointer; font-weight: bold; color: var(--text-color)">
                   <input type="checkbox" id="resistanceCheckbox" style="margin-right: 8px" /> Résistance de l'air
                 </label>
               </div>
 
-              <div id="resistance-params" class="hidden" style="background: #f5f5f5; padding: 10px; border-radius: 6px">
+              <div id="resistance-params" class="hidden">
                 <!-- Forme -->
                 <div class="control-group">
                   <label style="margin-bottom: 5px">Forme :</label>
-                  <div style="font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px">
-                    <label><input type="radio" name="projectileShape" value="sphere" checked /> Sphère</label>
-                    <label><input type="radio" name="projectileShape" value="cylinder" /> Cylindre</label>
-                    <label><input type="radio" name="projectileShape" value="bullet" /> Balle</label>
-                    <label><input type="radio" name="projectileShape" value="custom" /> Custom</label>
+                  <div style="font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; color: var(--text-color)">
+                    <label style="color: var(--text-color)"
+                      ><input type="radio" name="projectileShape" value="sphere" checked /> Sphère</label
+                    >
+                    <label style="color: var(--text-color)"
+                      ><input type="radio" name="projectileShape" value="cylinder" /> Cylindre</label
+                    >
+                    <label style="color: var(--text-color)"
+                      ><input type="radio" name="projectileShape" value="bullet" /> Balle</label
+                    >
+                    <label style="color: var(--text-color)"
+                      ><input type="radio" name="projectileShape" value="custom" /> Custom</label
+                    >
                   </div>
                 </div>
 
@@ -455,13 +517,17 @@
 
                 <div class="control-group">
                   <label style="margin-bottom: 5px">Modèle :</label>
-                  <div style="font-size: 11px; display: flex; gap: 10px">
-                    <label><input type="radio" name="dragModel" value="quadratic" checked /> f ~ v²</label>
-                    <label><input type="radio" name="dragModel" value="linear" /> f ~ v</label>
+                  <div style="font-size: 11px; display: flex; gap: 10px; color: var(--text-color)">
+                    <label style="color: var(--text-color)"
+                      ><input type="radio" name="dragModel" value="quadratic" checked /> f ~ v²</label
+                    >
+                    <label style="color: var(--text-color)"
+                      ><input type="radio" name="dragModel" value="linear" /> f ~ v</label
+                    >
                   </div>
                 </div>
 
-                <label style="font-size: 11px; margin-top: 5px">
+                <label style="font-size: 11px; margin-top: 5px; color: var(--text-color)">
                   <input type="checkbox" id="compareIdealCheckbox" checked /> Comparer trajectoire idéale
                 </label>
               </div>
@@ -488,7 +554,7 @@
                   <label for="velocityVectorsCheckbox">Vecteurs Vitesse</label>
                 </div>
 
-                <div id="velocity-options" style="margin-left: 20px; font-size: 11px; color: #666">
+                <div id="velocity-options" style="margin-left: 20px; font-size: 11px">
                   <div class="checkbox-group">
                     <input type="checkbox" id="showComponentsCheckbox" checked />
                     <label>Composantes Vx / Vy</label>
@@ -545,14 +611,12 @@
         }
       }
 
-      // Fonction pour forcer l'ouverture
       function openPanel() {
         if (!panelOpen) {
           togglePanel();
         }
       }
 
-      // Fonction pour forcer la fermeture
       function closePanel() {
         if (panelOpen) {
           togglePanel();
@@ -580,8 +644,6 @@
       document.addEventListener(
         "touchstart",
         function (event) {
-          // On ignore si on touche le slider ou le canvas directement si on veut draguer la cible
-          // Mais ici on veut détecter le swipe global
           touchstartX = event.changedTouches[0].screenX;
           touchstartY = event.changedTouches[0].screenY;
         },
@@ -599,19 +661,15 @@
       );
 
       function handleSwipe(e) {
-        // Si on interactue avec un slider, on évite le swipe panel
         if (e.target.type === "range") return;
 
         const diffX = touchEndX - touchstartX;
         const diffY = touchEndY - touchstartY;
 
-        // Mouvement horizontal dominant
         if (Math.abs(diffX) > Math.abs(diffY)) {
-          // Ouvrir (Swipe Droite depuis le bord gauche)
           if (diffX > SWIPE_THRESHOLD && touchstartX < 50 && !panelOpen) {
             togglePanel();
           }
-          // Fermer (Swipe Gauche n'importe où sur le panel)
           if (diffX < -SWIPE_THRESHOLD && panelOpen) {
             togglePanel();
           }
@@ -619,23 +677,20 @@
       }
 
       /* =========================================================================
-         CODE DE SIMULATION PHYSIQUE (INCHANGÉ)
+         CODE DE SIMULATION PHYSIQUE
          ========================================================================= */
 
-      // Récupération des éléments DOM
       const canvas = document.getElementById("simCanvas");
       const ctx = canvas.getContext("2d");
       const resultsDisplay = document.getElementById("results-display");
-      const resultsDisplayDesktop = document.getElementById("results-display-desktop"); // Gardé pour compatibilité JS
+      const resultsDisplayDesktop = document.getElementById("results-display-desktop");
       const equationDisplay = document.getElementById("equation-display");
-      const equationDisplayDesktop = document.getElementById("equation-display-desktop"); // Gardé pour compatibilité JS
+      const equationDisplayDesktop = document.getElementById("equation-display-desktop");
 
-      // Boutons mobiles simulés pour compatibilité
       const mobileParamsButton = document.getElementById("mobileParamsButton");
       const mobileGoButton = document.getElementById("mobileGoButton");
       const closePanelButton = document.getElementById("closePanelButton");
 
-      const controlsPanel = document.getElementById("panel"); // Anciennement controls-panel
       const resistanceCheckbox = document.getElementById("resistanceCheckbox");
       const resistanceParamsDiv = document.getElementById("resistance-params");
       const enveloppeCheckboxContainer = document.getElementById("enveloppe-checkbox-container");
@@ -675,7 +730,6 @@
       const commonControls = document.getElementById("common-controls");
       const solutionsDisplay = document.getElementById("solutions-display");
 
-      // Paramètres principaux et état
       const DT = 0.016;
       let state = {
         v0: 0,
@@ -722,18 +776,17 @@
         showVelocityComponents: true,
         showVelocityValues: true,
         velocityVectorScale: 0.3,
-        projectileShape: "sphere", // Défaut : Sphère
+        projectileShape: "sphere",
       };
       const DRAG_COEFF_PRESETS = {
-        sphere: 0.47, // Typique pour une sphère lisse
-        cylinder: 1.17, // Typique pour un cylindre orienté perpendiculairement
-        bullet: 0.295, // Typique pour une balle de fusil (subsonique)
-        custom: null, // La valeur sera celle définie par l'utilisateur
+        sphere: 0.47,
+        cylinder: 1.17,
+        bullet: 0.295,
+        custom: null,
       };
       const toRad = (deg) => (deg * Math.PI) / 180;
       const toDeg = (rad) => (rad * 180) / Math.PI;
 
-      // Calcul de la vitesse minimale théorique pour atteindre une cible
       function calculerVitesseMinimale(g, x_target, y_target, h_depart) {
         const y_minus_h = y_target - h_depart;
         const sous_racine = Math.sqrt(Math.pow(y_minus_h, 2) + Math.pow(x_target, 2));
@@ -742,7 +795,6 @@
         return Math.sqrt(v0_carre);
       }
 
-      // Trajectoire avec frottement (modèles linéaire/quadratique)
       function calculerTrajectoireAvecFrottement(
         v0,
         alphaRad,
@@ -823,7 +875,6 @@
         };
       }
 
-      // Caractéristiques analytiques (sans frottement)
       function calculerCaracteristiques(v0, alphaRad, h, g, m, hArrivee) {
         if (g <= 0 || v0 <= 0)
           return {
@@ -896,7 +947,6 @@
         };
       }
 
-      // Enveloppe (partie x >= 0)
       function calculerEnveloppe(v0, h, g) {
         if (v0 <= 0 || g <= 0) return { x: [], y: [] };
         const xMaxEnv = (v0 / g) * Math.sqrt(v0 ** 2 + 2 * g * h);
@@ -915,17 +965,14 @@
 
       let scaleX, scaleY, offsetX, offsetY;
 
-      // Configure canvas taille/DPR
       function setupCanvas() {
         const dpr = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
         canvas.width = Math.round(rect.width * dpr);
         canvas.height = Math.round(rect.height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // On ne force plus le style width/height ici, le CSS s'en charge (100%)
       }
 
-      // Définit la transformation monde->écran
       function setTransform(xMax, yMax) {
         const margin = 0.1;
         scaleX = (canvas.clientWidth * (1 - 2 * margin)) / Math.max(1, xMax);
@@ -940,7 +987,6 @@
         return { x: (tx - offsetX) / scaleX, y: (offsetY - ty) / scaleY };
       }
 
-      // Drag cible: down / move / up
       function handleMouseDown(event) {
         if (state.mode !== "target") return;
         const rect = canvas.getBoundingClientRect();
@@ -979,18 +1025,23 @@
         }
       }
 
-      // Axes et graduations
+      // === DRAW AXES AVEC SUPPORT THEME ===
       function drawAxes(xMax, yMax) {
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const color = isDark ? "#e0e0e0" : "black";
+
         const origin = transform(0, 0);
         ctx.beginPath();
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = color;
         ctx.lineWidth = 1;
         ctx.moveTo(origin.tx, transform(0, yMax).ty);
         ctx.lineTo(origin.tx, origin.ty);
         ctx.lineTo(transform(xMax, 0).tx, origin.ty);
         ctx.stroke();
+
         ctx.font = "10px Arial";
-        ctx.fillStyle = "black";
+        ctx.fillStyle = color;
+
         const getNiceStep = (range) => {
           if (range <= 0) return 1;
           const r = Math.pow(10, Math.floor(Math.log10(range / 5)));
@@ -1012,9 +1063,18 @@
         drawTicks(yMax, getNiceStep(yMax), false);
       }
 
-      // Vecteurs instantanés et utilitaires de dessin
       function drawInstantaneousVelocityVectors(ctx, state) {
         if (!state.showVelocityVectors || !state.showFinalTrajectory) return;
+
+        // --- DÉTECTION DU THÈME ---
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+
+        // Couleur du vecteur somme (Bleu électrique en dark, Bleu foncé en light)
+        const simVecColor = isDark ? "rgba(79, 172, 254, 0.9)" : "rgba(0, 0, 255, 0.8)";
+
+        // Couleur des composantes Vx/Vy (Gris clair en dark, Gris moyen en light)
+        const compColor = isDark ? "rgba(200, 200, 200, 0.6)" : "rgba(150, 150, 150, 0.7)";
+
         let frameIndex = Math.floor(state.currentFrameIndex);
 
         const drawArrow = (startX, startY, endX, endY, color, lineWidth = 2.5, label = "") => {
@@ -1165,6 +1225,7 @@
             const pos1 = state.trajectoire1[index1];
             const vel1 = getVelocityAtFrame(state.trajectoire1, index1);
             const posScreen1 = transform(pos1.x, pos1.y);
+            // Rouge reste rouge (mais on pourrait l'éclaircir aussi si besoin)
             drawVectorSet(posScreen1, vel1, "rgba(255, 0, 0, 0.8)", "rgba(255, 100, 100, 0.7)");
           }
           if (state.trajectoire2.length > 0) {
@@ -1181,17 +1242,20 @@
             const pos = traj[index];
             const vel = getVelocityAtFrame(traj, index);
             const posScreen = transform(pos.x, pos.y);
-            drawVectorSet(
-              posScreen,
-              vel,
-              state.mode === "simulation" ? "rgba(0,0,255,0.8)" : "rgba(255,0,0,0.8)",
-              "rgba(150,150,150,0.7)"
-            );
+
+            // ICI : On utilise simVecColor défini au début de la fonction
+            drawVectorSet(posScreen, vel, state.mode === "simulation" ? simVecColor : "rgba(255,0,0,0.8)", compColor);
           }
 
           const max = getMaxPointFromTrajectory(traj);
           if (max) {
-            const dashColor = state.mode === "simulation" ? "rgba(0,0,255,0.45)" : "rgba(255,0,0,0.5)";
+            // Pointillés du sommet (même logique que draw())
+            const dashColor =
+              state.mode === "simulation"
+                ? isDark
+                  ? "rgba(79, 172, 254, 0.5)"
+                  : "rgba(0,0,255,0.45)"
+                : "rgba(255,0,0,0.5)";
             drawDashedCrossAtWorld(max.x, max.y, dashColor);
           }
         }
@@ -1270,50 +1334,59 @@
         ctx.restore();
       }
 
+      // === LABEL AVEC SUPPORT THEME ===
       function drawLabelAtMaxPoint(x, y, color = "black") {
-        const p = transform(x, y); // Point maximal en coordonnées écran
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const bgStyle = isDark ? "rgba(40, 40, 40, 0.9)" : "rgba(255, 255, 255, 0.8)";
+        const textStyle = color;
 
-        // Texte du label
+        const p = transform(x, y);
         const labelText = `(${x.toFixed(2)}m, ${y.toFixed(2)}m) Max`;
 
         ctx.save();
-        ctx.font = "bold 14px Arial"; // Police et taille du label
-        ctx.fillStyle = color; // Couleur du texte
-        ctx.textAlign = "left"; // Alignement du texte
-        ctx.textBaseline = "bottom"; // Position de la ligne de base du texte
+        ctx.font = "bold 14px Arial";
+        ctx.fillStyle = textStyle;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
 
-        // Calcul de la taille du texte pour le fond
         const textMetrics = ctx.measureText(labelText);
         const textWidth = textMetrics.width;
-        const textHeight = parseInt(ctx.font.match(/\d+/)[0], 10) * 1.2; // Estimation de la hauteur
+        const textHeight = parseInt(ctx.font.match(/\d+/)[0], 10) * 1.2;
 
-        // Positionnement du fond et du texte (décalé du point max)
-        const offsetX = 10; // Décalage horizontal par rapport au point
-        const offsetY = 5; // Décalage vertical par rapport au point
+        const offsetX = 10;
+        const offsetY = 5;
 
         const rectX = p.tx + offsetX;
-        const rectY = p.ty - textHeight - offsetY; // Positionnement au-dessus du point
+        const rectY = p.ty - textHeight - offsetY;
 
-        // Dessiner un fond semi-transparent pour une meilleure lisibilité
-        ctx.fillStyle = "rgba(255, 255, 255, 0.8)"; // Fond blanc semi-transparent
-        ctx.fillRect(rectX - 4, rectY - 4, textWidth + 8, textHeight + 8); // Rectangle de fond
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.2)"; // Bordure légère
+        ctx.fillStyle = bgStyle;
+        ctx.fillRect(rectX - 4, rectY - 4, textWidth + 8, textHeight + 8);
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
         ctx.strokeRect(rectX - 4, rectY - 4, textWidth + 8, textHeight + 8);
 
-        // Dessiner le texte par-dessus le fond
-        ctx.fillStyle = color; // Couleur originale du texte
+        ctx.fillStyle = textStyle;
         ctx.fillText(labelText, rectX, p.ty - offsetY);
 
         ctx.restore();
       }
 
-      // Dessin principal
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Détection du thème pour les couleurs
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+
+        // DÉFINITION DES COULEURS (Bleu clair en dark mode, Bleu foncé en light mode)
+        const simColor = isDark ? "#4facfe" : "blue";
+        const simVectorColor = isDark ? "rgba(79, 172, 254, 0.8)" : "rgba(0, 0, 255, 0.7)";
+        const simDashColor = isDark ? "rgba(79, 172, 254, 0.5)" : "rgba(0,0,255,0.45)";
+
         drawAxes(state.xMaxGraph, state.yMaxGraph);
 
-        if (state.mode === "simulation") drawV0Vector(state.alpha, "rgba(0, 0, 255, 0.7)");
-        else if (state.mode === "target" && state.solutions.length > 0) {
+        // Dessin du vecteur v0 initial
+        if (state.mode === "simulation") {
+          drawV0Vector(state.alpha, simVectorColor);
+        } else if (state.mode === "target" && state.solutions.length > 0) {
           drawV0Vector(state.solutions[0], "red");
           if (state.solutions.length === 2) drawV0Vector(state.solutions[1], "purple");
         }
@@ -1339,6 +1412,7 @@
         if (state.mode === "target") drawTargetMarker(state.target.x, state.target.y);
         else if (state.dureeVol > 0) drawTargetMarker(state.porteeX, state.hArrivee);
 
+        // Enveloppe
         if (
           enveloppeCheckbox.checked &&
           !state.isResistanceActive &&
@@ -1352,7 +1426,8 @@
             const p = transform(x, state.enveloppe.y[i]);
             if (p.ty <= canvas.clientHeight) ctx.lineTo(p.tx, p.ty);
           });
-          ctx.strokeStyle = "rgba(0, 0, 0, 0.4)";
+
+          ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.4)";
           ctx.setLineDash([5, 5]);
           ctx.stroke();
           ctx.setLineDash([]);
@@ -1403,14 +1478,19 @@
             if (max2) drawDashedCrossAtWorld(max2.x, max2.y, "rgba(128,0,128,0.5)");
           } else {
             const traj = state.trajectoire.length > 0 ? state.trajectoire : state.trajectoire1;
-            const color = state.mode === "simulation" ? "blue" : "red";
+
+            // Choix de la couleur : bleu clair si dark mode, bleu standard sinon
+            const color = state.mode === "simulation" ? simColor : "red";
+
             drawPath(traj, color);
             drawProjectileDot(traj, color);
+
             const max = getMaxPointFromTrajectory(traj);
             if (max) {
-              const dashColor = state.mode === "simulation" ? "rgba(0,0,255,0.45)" : "rgba(255,0,0,0.5)";
+              // Couleur des pointillés
+              const dashColor = state.mode === "simulation" ? simDashColor : "rgba(255,0,0,0.5)";
               drawDashedCrossAtWorld(max.x, max.y, dashColor);
-              drawLabelAtMaxPoint(max.x, max.y, state.mode === "simulation" ? "blue" : "red");
+              drawLabelAtMaxPoint(max.x, max.y, color);
             }
           }
         }
@@ -1434,7 +1514,6 @@
           ctx.setLineDash([]);
         }
       }
-
       function genererEquationParabole(angleDeg) {
         const { v0, g, h } = state;
         if (v0 <= 0 || g <= 0) return "Paramètres invalides pour l'équation.";
@@ -1459,7 +1538,6 @@
         resultsDisplayDesktop.innerHTML = fullHTML;
       }
 
-      // Affichage des résultats en mode cible
       function updateTargetModeDisplays() {
         let resultsHTML = `<b>Paramètres du tir :</b>
                    <ul>
@@ -1471,7 +1549,6 @@
 
         if (state.solutions.length > 0) {
           resultsHTML += `<b>Résultats Clés :</b><ul>`;
-          // Tir 1
           const c1 = calculerCaracteristiques(
             state.v0,
             toRad(state.solutions[0]),
@@ -1483,7 +1560,6 @@
           resultsHTML += `<li>Tir 1 (Rouge) : H. max <b>${c1.yMax.toFixed(2)} m</b> (à x=${c1.xSommet.toFixed(
             2
           )}m)</li>`;
-          // Tir 2 si présent
           if (state.solutions.length === 2) {
             const c2 = calculerCaracteristiques(
               state.v0,
@@ -1570,8 +1646,6 @@
 
           if (state.isResistanceActive) {
             const modelText = state.dragModel === "quadratic" ? "(f ~ v²)" : "(f ~ v)";
-            // Utilisation de innerHTML pour le saut de ligne <br>
-            // Et un span pour rendre la deuxième ligne moins "lourde" visuellement
             graphTitle.innerHTML = `Trajectoire du projectile<br>
                                     <span style="font-weight:normal; font-size:0.9em;">(avec frottement air ${modelText})</span>`;
           } else {
@@ -1687,53 +1761,36 @@
         }
       }
 
-      // Animation basée sur frames
-      // Animation basée sur frames
       function animationLoop() {
         if (state.isPaused) return;
 
-        // Déterminer la longueur de l'animation selon le mode (une ou deux trajectoires)
         let maxFrames = state.isDualTrajectoryMode
           ? Math.max(state.trajectoire1.length, state.trajectoire2.length)
           : state.trajectoire.length;
 
-        // --- VÉRIFICATION DE LA FIN DE L'ANIMATION ---
         if (state.currentFrameIndex >= maxFrames - 1) {
-          // 1. Caler sur la dernière frame
           state.currentFrameIndex = maxFrames - 1;
-
-          // 2. Arrêter la boucle
           cancelAnimationFrame(state.animationId);
           state.animationId = null;
           state.isPaused = true;
-
-          // 3. Réinitialiser l'état des boutons (Remettre sur "Go")
           pauseButton.textContent = "Go";
           mobileGoButton.textContent = "Go";
           pauseButton.classList.remove("btn-pause");
           pauseButton.classList.add("btn-go");
 
-          // 4. Mettre à jour les résultats finaux
           if (state.mode === "target") {
             updateTargetModeDisplays();
           } else {
             updateResultsText("✓ Terminé");
           }
 
-          // 5. RÉOUVRIR LE PANNEAU AUTOMATIQUEMENT (La modification demandée)
           openPanel();
-
-          // 6. Dessiner la dernière image et sortir
           draw();
           return;
         }
 
-        // --- CONTINUATION DE L'ANIMATION ---
-
-        // Avancer l'index selon le facteur de vitesse
         state.currentFrameIndex += state.speedFactor;
 
-        // Mise à jour des données temps réel (Ec, Ep, Position)
         if (state.mode === "simulation") {
           const frameIndex = Math.floor(state.currentFrameIndex);
           const t = frameIndex * DT;
@@ -1741,7 +1798,6 @@
 
           if (frame) {
             const Ep = state.m * state.g * frame.y;
-            // Calcul approximatif de l'énergie cinétique restante
             const Ec_approx = state.eInitiale - Ep > 0 ? state.eInitiale - Ep : 0;
 
             updateResultsText(
@@ -1754,14 +1810,10 @@
           }
         }
 
-        // Dessiner la frame actuelle
         draw();
-
-        // Demander la frame suivante
         state.animationId = requestAnimationFrame(animationLoop);
       }
 
-      // Résolution des angles pour le mode cible
       function calculateTargetSolutions() {
         clearSolutions();
         state.showFinalTrajectory = false;
@@ -1860,7 +1912,6 @@
           let maxFrames = state.isDualTrajectoryMode
             ? Math.max(state.trajectoire1.length, state.trajectoire2.length)
             : state.trajectoire.length;
-          // Si on relance une animation terminée, on repart du début
           if (state.currentFrameIndex >= maxFrames - 1 && maxFrames > 0) state.currentFrameIndex = 0;
           state.showFinalTrajectory = true;
         }
@@ -1868,24 +1919,19 @@
         state.isPaused = !state.isPaused;
 
         if (state.isPaused) {
-          // === CAS PAUSE ===
           cancelAnimationFrame(state.animationId);
           pauseButton.textContent = "Resume";
           mobileGoButton.textContent = "Resume";
           pauseButton.classList.remove("btn-pause");
           pauseButton.classList.add("btn-go");
-
-          openPanel(); // <--- AJOUT : On rouvre le panneau pour voir les réglages
+          openPanel();
         } else {
-          // === CAS LECTURE (GO) ===
           state.startTime = Date.now();
           pauseButton.textContent = "Pause";
           mobileGoButton.textContent = "Pause";
           pauseButton.classList.remove("btn-go");
           pauseButton.classList.add("btn-pause");
-
-          closePanel(); // <--- AJOUT : On ferme le panneau pour voir la simulation
-
+          closePanel();
           animationLoop();
         }
       }
@@ -1967,6 +2013,82 @@
           resistanceParamsDiv.classList.toggle("hidden", !resistanceCheckbox.checked);
           update();
         }
+      }
+
+      // === CROIX AVEC SUPPORT THEME ===
+      function getMaxPointFromTrajectory(trajectoire) {
+        if (!trajectoire || trajectoire.length === 0) return null;
+        let maxIdx = 0;
+        for (let i = 1; i < trajectoire.length; i++) if (trajectoire[i].y > trajectoire[maxIdx].y) maxIdx = i;
+        return trajectoire[maxIdx];
+      }
+
+      function drawDashedCrossAtWorld(x, y, color = "rgba(0,0,0,0.4)") {
+        const top = transform(x, state.yMaxGraph);
+        const bottom = transform(x, 0);
+        const left = transform(0, y);
+        const right = transform(state.xMaxGraph, y);
+
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const lineColor = isDark ? "rgba(255,255,255,0.4)" : color;
+        const bgStyle = isDark ? "rgba(40, 40, 40, 0.95)" : "rgba(255,255,255,0.95)";
+        const textStyle = isDark ? "#e0e0e0" : "black";
+
+        ctx.save();
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 4]);
+
+        ctx.beginPath();
+        ctx.moveTo(top.tx, top.ty);
+        ctx.lineTo(bottom.tx, bottom.ty);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(left.tx, left.ty);
+        ctx.lineTo(right.tx, right.ty);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+
+        const fontSize = 10;
+        const padding = 4;
+        ctx.font = `${fontSize}px Arial`;
+        ctx.textBaseline = "middle";
+
+        const xLabel = `${x.toFixed(2)}m`;
+        ctx.textAlign = "center";
+        const xLabelWidth = ctx.measureText(xLabel).width;
+        const rectX = bottom.tx - (xLabelWidth + padding * 2) / 2;
+        const rectY = bottom.ty + 6;
+        const rectW = xLabelWidth + padding * 2;
+        const rectH = fontSize + padding;
+
+        ctx.fillStyle = bgStyle;
+        ctx.fillRect(rectX, rectY, rectW, rectH);
+        ctx.strokeStyle = "rgba(0,0,0,0.12)";
+        ctx.strokeRect(rectX, rectY, rectW, rectH);
+
+        ctx.fillStyle = textStyle;
+        ctx.fillText(xLabel, bottom.tx, rectY + rectH / 2);
+
+        const yLabel = `${y.toFixed(2)}m`;
+        ctx.textAlign = "right";
+        const yLabelWidth = ctx.measureText(yLabel).width;
+        const rectW2 = yLabelWidth + padding * 2;
+        const rectH2 = fontSize + padding;
+        const rectX2 = 5 + left.tx - rectW2 - 6;
+        const rectY2 = left.ty - rectH2 / 2;
+
+        ctx.fillStyle = bgStyle;
+        ctx.fillRect(rectX2, rectY2, rectW2, rectH2);
+        ctx.strokeStyle = "rgba(0,0,0,0.12)";
+        ctx.strokeRect(rectX2, rectY2, rectW2, rectH2);
+
+        ctx.fillStyle = textStyle;
+        ctx.fillText(yLabel, rectX2 + rectW2 - padding, left.ty);
+
+        ctx.restore();
+        ctx.setLineDash([]);
       }
 
       function setupEventListeners() {
@@ -2098,10 +2220,6 @@
           { passive: true }
         );
 
-        // mobileParamsButton.addEventListener("click", () => controlsPanel.classList.add("panel-visible")); // Plus utilisé
-        // closePanelButton.addEventListener("click", () => controlsPanel.classList.remove("panel-visible")); // Plus utilisé
-        // mobileGoButton.addEventListener("click", toggleAnimation); // Plus utilisé
-
         const onPointerDown = (e) => {
           if (typeof e.button !== "undefined" && e.button !== 0) return;
           handleMouseDown(e);
@@ -2146,7 +2264,12 @@
         const dragCoeffControl = document.getElementById("dragCoeff-control");
 
         const updateDragCoeffFromShape = () => {
-          state.projectileShape = document.querySelector('input[name="projectileShape"]:checked').value;
+          // 1. On récupère l'élément coché
+          const selectedRadio = document.querySelector('input[name="projectileShape"]:checked');
+
+          // 2. SÉCURITÉ : Si aucun n'est coché (null), on force "sphere" par défaut
+          // Cela évite le crash "can't access property value of null"
+          state.projectileShape = selectedRadio ? selectedRadio.value : "sphere";
 
           if (state.projectileShape === "custom") {
             dragCoeffControl.classList.remove("disabled-by-shape");
@@ -2156,7 +2279,8 @@
             dragCoeffControl.classList.add("disabled-by-shape");
             inputs.dragCoeff.disabled = true;
             sliders.dragCoeff.disabled = true;
-            state.dragCoeff = DRAG_COEFF_PRESETS[state.projectileShape];
+            // On s'assure que DRAG_COEFF_PRESETS[state.projectileShape] existe
+            state.dragCoeff = DRAG_COEFF_PRESETS[state.projectileShape] || 0.47;
             inputs.dragCoeff.value = state.dragCoeff.toFixed(2);
             sliders.dragCoeff.value = state.dragCoeff;
           }
@@ -2172,78 +2296,42 @@
         updateDragCoeffFromShape();
       }
 
+      /* =========================================
+       LOGIQUE THEME DARK / LIGHT
+       ========================================= */
+      function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        html.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+
+        updateThemeIcon(newTheme);
+        draw(); // Redessiner le canvas pour mettre à jour les axes
+      }
+
+      function updateThemeIcon(theme) {
+        const btn = document.getElementById("themeToggleBtn");
+        if (btn) {
+          btn.textContent = theme === "dark" ? "🌙" : "☀️";
+        }
+      }
+
+      // Initialisation
+      (function initTheme() {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        updateThemeIcon(savedTheme);
+      })();
+
+      /* =========================================
+       DÉMARRAGE
+       ========================================= */
       setupCanvas();
       setupEventListeners();
       setMode("simulation");
       reset();
-
-      // utilitaires pour affichage du point maximal
-      function getMaxPointFromTrajectory(trajectoire) {
-        if (!trajectoire || trajectoire.length === 0) return null;
-        let maxIdx = 0;
-        for (let i = 1; i < trajectoire.length; i++) if (trajectoire[i].y > trajectoire[maxIdx].y) maxIdx = i;
-        return trajectoire[maxIdx];
-      }
-
-      // trace deux traits pointillés croisés (monde -> écran)
-      function drawDashedCrossAtWorld(x, y, color = "rgba(0,0,0,0.4)") {
-        const top = transform(x, state.yMaxGraph);
-        const bottom = transform(x, 0);
-        const left = transform(0, y);
-        const right = transform(state.xMaxGraph, y);
-
-        ctx.save();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        ctx.setLineDash([6, 4]);
-
-        ctx.beginPath();
-        ctx.moveTo(top.tx, top.ty);
-        ctx.lineTo(bottom.tx, bottom.ty);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(left.tx, left.ty);
-        ctx.lineTo(right.tx, right.ty);
-        ctx.stroke();
-
-        ctx.setLineDash([]);
-
-        const fontSize = 10;
-        const padding = 4;
-        ctx.font = `${fontSize}px Arial`;
-        ctx.textBaseline = "middle";
-
-        const xLabel = `${x.toFixed(2)}m`;
-        ctx.textAlign = "center";
-        const xLabelWidth = ctx.measureText(xLabel).width;
-        const rectX = bottom.tx - (xLabelWidth + padding * 2) / 2;
-        const rectY = bottom.ty + 6;
-        const rectW = xLabelWidth + padding * 2;
-        const rectH = fontSize + padding;
-        ctx.fillStyle = "rgba(255,255,255,0.95)";
-        ctx.fillRect(rectX, rectY, rectW, rectH);
-        ctx.strokeStyle = "rgba(0,0,0,0.12)";
-        ctx.strokeRect(rectX, rectY, rectW, rectH);
-        ctx.fillStyle = "black";
-        ctx.fillText(xLabel, bottom.tx, rectY + rectH / 2);
-
-        const yLabel = `${y.toFixed(2)}m`;
-        ctx.textAlign = "right";
-        const yLabelWidth = ctx.measureText(yLabel).width;
-        const rectW2 = yLabelWidth + padding * 2;
-        const rectH2 = fontSize + padding;
-        const rectX2 = 5 + left.tx - rectW2 - 6;
-        const rectY2 = left.ty - rectH2 / 2;
-        ctx.fillStyle = "rgba(255,255,255,0.95)";
-        ctx.fillRect(rectX2, rectY2, rectW2, rectH2);
-        ctx.strokeStyle = "rgba(0,0,0,0.12)";
-        ctx.strokeRect(rectX2, rectY2, rectW2, rectH2);
-        ctx.fillStyle = "black";
-        ctx.fillText(yLabel, rectX2 + rectW2 - padding, left.ty);
-
-        ctx.restore();
-        ctx.setLineDash([]);
-      }
     </script>
   </body>
 </html>
