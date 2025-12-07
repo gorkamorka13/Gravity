@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="/favicon.ico" sizes="32x32" />
     <title>Simulateur de Mouvement Parabolique</title>
     <style>
       /* =========================================
@@ -468,12 +469,27 @@
                 </div>
 
                 <div class="control-group">
-                  <label>Gravité (g): <input type="number" id="gInput" /></label>
+                  <label>Planète :</label>
+                  <select id="planetSelect" style="width: 100%; padding: 4px; border: 1px solid var(--input-border); border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);">
+                    <option value="terre" selected>Terre (9.81 m/s²)</option>
+                    <option value="lune">Lune (1.62 m/s²)</option>
+                    <option value="mars">Mars (3.71 m/s²)</option>
+                    <option value="venus">Vénus (8.87 m/s²)</option>
+                    <option value="mercure">Mercure (3.70 m/s²)</option>
+                    <option value="jupiter">Jupiter (24.79 m/s²)</option>
+                    <option value="saturne">Saturne (10.44 m/s²)</option>
+                    <option value="uranus">Uranus (8.69 m/s²)</option>
+                    <option value="neptune">Neptune (11.15 m/s²)</option>
+                  </select>
+                </div>
+
+                <div class="control-group">
+                  <label>Gravité (g): <span id="gravityDisplay">9.81</span> m/s² <input type="number" id="gInput" /></label>
                   <input type="range" id="gSlider" min="1" max="25" step="0.01" value="9.81" />
                 </div>
 
                 <div id="mass-control" class="control-group">
-                  <label>Masse (m): <input type="number" id="mInput" /></label>
+                  <label>Masse (kg): <input type="number" id="mInput" /></label>
                   <input type="range" id="mSlider" min="0.1" max="100" step="0.1" value="1.0" />
                 </div>
               </div>
@@ -569,7 +585,7 @@
           </div>
 
           <!-- SECTION 5: RÉSULTATS -->
-          <div class="section collapsible">
+          <div class="section collapsible collapsed">
             <div class="section-header">📊 Résultats</div>
             <div class="section-content">
               <div id="results-display"></div>
@@ -578,7 +594,7 @@
           </div>
 
           <div style="font-size: 10px; color: #999; text-align: center; margin-top: 20px">
-            © ESPARSA Michel - 03/11/2025
+            © ESPARSA Michel - 07/12/2025
           </div>
         </div>
       </div>
@@ -721,6 +737,7 @@
         dragCoeff: document.getElementById("dragCoeffInput"),
       };
       const values = { speed: document.getElementById("speedValue") };
+      const gravityDisplay = document.getElementById("gravityDisplay");
       const enveloppeCheckbox = document.getElementById("enveloppeCheckbox");
       const pauseButton = document.getElementById("pauseButton");
       const resetButton = document.getElementById("resetButton");
@@ -729,6 +746,18 @@
       const targetControls = document.getElementById("target-controls");
       const commonControls = document.getElementById("common-controls");
       const solutionsDisplay = document.getElementById("solutions-display");
+
+      const PLANET_GRAVITIES = {
+        terre: 9.81,
+        lune: 1.62,
+        mars: 3.71,
+        venus: 8.87,
+        mercure: 3.70,
+        jupiter: 24.79,
+        saturne: 10.44,
+        uranus: 8.69,
+        neptune: 11.15,
+      };
 
       const DT = 0.016;
       let state = {
@@ -777,6 +806,11 @@
         showVelocityValues: true,
         velocityVectorScale: 0.3,
         projectileShape: "sphere",
+        isComparisonMode: false,
+        comparisonTrajectories: [],
+        currentComparisonIndex: 0,
+        comparisonPlanets: [],
+        comparisonColors: ["#4facfe", "#888", "#e74c3c", "#9b59b6"], // Blue, Gray, Red, Purple
       };
       const DRAG_COEFF_PRESETS = {
         sphere: 0.47,
@@ -786,6 +820,12 @@
       };
       const toRad = (deg) => (deg * Math.PI) / 180;
       const toDeg = (rad) => (rad * 180) / Math.PI;
+
+      function updateGravityDisplay() {
+        if (gravityDisplay) {
+          gravityDisplay.textContent = state.g.toFixed(2);
+        }
+      }
 
       function calculerVitesseMinimale(g, x_target, y_target, h_depart) {
         const y_minus_h = y_target - h_depart;
@@ -1513,6 +1553,15 @@
           ctx.stroke();
           ctx.setLineDash([]);
         }
+
+        // Draw credits in bottom right corner
+        ctx.save();
+        ctx.font = "10px Arial";
+        ctx.fillStyle = isDark ? "#e0e0e0" : "#999";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("© ESPARSA Michel - 07/12/2025", canvas.clientWidth - 10, canvas.clientHeight - 10);
+        ctx.restore();
       }
       function genererEquationParabole(angleDeg) {
         const { v0, g, h } = state;
@@ -1784,7 +1833,6 @@
             updateResultsText("✓ Terminé");
           }
 
-          openPanel();
           draw();
           return;
         }
@@ -1948,6 +1996,7 @@
         inputs.hArrivee.value = 0;
         sliders.g.value = 9.81;
         inputs.g.value = 9.81;
+        updateGravityDisplay();
         sliders.m.value = 1.0;
         inputs.m.value = 1.0;
         sliders.speed.value = 1.0;
@@ -2139,13 +2188,21 @@
           passive: true,
         });
 
-        ["h", "g"].forEach((key) => {
+        ["h"].forEach((key) => {
           const shared = () => {
             if (state.mode === "simulation") update();
             else calculateTargetSolutions();
           };
           if (sliders[key] && inputs[key]) linkSliderInput(sliders[key], inputs[key], shared);
         });
+
+        // Special handling for gravity to update display
+        const gravityShared = () => {
+          if (state.mode === "simulation") update();
+          else calculateTargetSolutions();
+          updateGravityDisplay();
+        };
+        if (sliders.g && inputs.g) linkSliderInput(sliders.g, inputs.g, gravityShared);
 
         if (sliders.speed)
           sliders.speed.addEventListener(
@@ -2193,6 +2250,19 @@
             update();
           })
         );
+
+        document.getElementById("planetSelect").addEventListener("change", (e) => {
+          const planet = e.target.value;
+          const gravity = PLANET_GRAVITIES[planet];
+          if (gravity !== undefined) {
+            state.g = gravity;
+            sliders.g.value = gravity;
+            inputs.g.value = gravity.toFixed(2);
+            updateGravityDisplay();
+            if (state.mode === "simulation") update();
+            else calculateTargetSolutions();
+          }
+        });
 
         document.getElementById("velocityVectorsCheckbox").addEventListener(
           "change",
