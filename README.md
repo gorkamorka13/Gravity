@@ -61,11 +61,18 @@ Contrairement aux simulateurs basiques, celui-ci intègre un moteur physique com
     *   Pertes dues aux frottements (en Joules).
 *   **Équations Mathématiques :** Génération et affichage dynamique de l'équation de la trajectoire $y(x)$ basée sur les paramètres actuels.
 
-### 🎨 Interface & Expérience Utilisateur
-*   **Thème Sombre / Clair :** Bascule automatique des couleurs (graphiques, vecteurs et interface) pour le confort visuel.
-*   **Responsive :** Menu latéral rétractable ("Burger menu") optimisé pour mobile et desktop.
-*   **Contrôle Temporel :** Slider de vitesse d'animation (ralenti ou accéléré), pause, et reset rapide.
-*   **Interaction Tactile :** Support du *drag & drop* pour déplacer la cible à la souris ou au doigt.
+---
+
+## 🎮 Contrôles & Gestes
+
+L'interface a été conçue pour être réactive et accessible via plusieurs méthodes d'entrée :
+
+*   **👆 Swipe Tactile (Mobile/Tablette) :**
+    *   Un glissement latéral (Swipe) permet d'ouvrir ou de fermer rapidement le panneau de configuration sans chercher le bouton.
+*   **🖱️ Drag & Drop (Souris) :**
+    *   En *Mode Cible*, vous pouvez cliquer et glisser la cible rouge directement sur le graphique pour changer ses coordonnées $(x, y)$ intuitivement.
+*   **⌨️ Navigation Clavier :**
+    *   L'interface supporte la navigation native : utilisez `Tab` pour naviguer entre les champs et `Espace` ou `Entrée` pour activer les boutons/checkboxes.
 
 ---
 
