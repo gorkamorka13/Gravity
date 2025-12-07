@@ -1,5 +1,3 @@
-Voici la version finale du README. Le bloc de code JavaScript illustrant la méthode d'Euler a été retiré de la section technique.
-
 ***
 
 # 🚀 Simulateur de Mouvement Parabolique Universel
