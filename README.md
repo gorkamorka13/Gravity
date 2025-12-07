@@ -1,100 +1,106 @@
-# 🎯 Simulateur de Mouvement Parabolique
+Voici la version finale du README. Le bloc de code JavaScript illustrant la méthode d'Euler a été retiré de la section technique.
 
-Ce projet est une application web interactive permettant de **simuler le mouvement d’un projectile** soumis à la gravité, avec ou sans résistance de l’air.  
-Elle illustre les **principes de la cinématique** et de la **dynamique** d’un tir parabolique, tout en offrant une interface moderne et responsive (mobile + desktop).
+***
 
----
+# 🚀 Simulateur de Mouvement Parabolique Universel
 
-## 🚀 Fonctionnalités principales
+Une application web interactive et autonome pour simuler la physique balistique. Ce projet permet non seulement d'étudier le mouvement sur Terre avec frottements, mais offre également **un comparateur multi-planétaire unique** pour visualiser simultanément les différences de gravité à travers le système solaire.
 
-### 🎬 Modes de simulation
-- **Mode Simulation :** visualise la trajectoire d’un projectile lancé à une vitesse et un angle donnés.  
-- **Mode Cible :** détermine les angles de tir possibles pour atteindre une cible définie en coordonnées (X, Y).
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/Vanilla%20JS-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-### ⚙️ Paramètres configurables
-Tu peux ajuster :
-- La **vitesse initiale (v₀)**  
-- L’**angle de tir (α)**  
-- La **hauteur de départ (h_d)** et **d’arrivée (h_a)**  
-- La **gravité (g)** — par exemple pour simuler la Lune ou Mars 🌕  
-- La **masse du projectile (m)**  
-- La **résistance de l’air**, avec :
-  - le **rayon** du projectile  
-  - le **coefficient de traînée (Cx)**  
-  - le **modèle de frottement** : linéaire *(f ~ v)* ou quadratique *(f ~ v²)*  
-  - la **forme** : sphère, cylindre, balle ou personnalisée  
+## 🌌 Système Solaire et Gravité
 
-### 📊 Résultats calculés
-Le simulateur affiche :
-- Hauteur maximale atteinte  
-- Portée horizontale  
-- Durée du vol  
-- Vitesse à l’impact  
-- Énergie mécanique initiale et à l’impact  
-- Éventuelles **pertes d’énergie dues aux frottements**  
+L'un des points forts de ce simulateur est sa base de données astronomique intégrée. Vous pouvez simuler un tir n'importe où dans le système solaire.
 
-### 📈 Représentations graphiques
-- Trajectoire du projectile en temps réel  
-- Enveloppe théorique des tirs possibles  
-- Vecteurs vitesse (avec composantes et valeurs numériques)  
-- Équations analytiques de la trajectoire, vitesse et accélération (si pas de frottement)
+### 1. Mode Comparaison Multi-Planétaire (Nouveau ⭐)
+Visualisez **simultanément** la trajectoire d'un même projectile sur plusieurs astres. Cochez simplement les planètes souhaitées (ex: Terre vs Lune vs Jupiter) et le graphique superposera les courbes en temps réel pour une comparaison directe.
+
+### 2. Données Gravitationnelles Intégrées
+Le simulateur inclut les constantes de gravité ($g$) précises pour les corps célestes suivants :
+
+| Astre | Gravité ($m/s^2$) |
+| :--- | :--- |
+| **Terre** | $9.81$ |
+| **Lune** | $1.62$ |
+| **Mars** | $3.71$ |
+| **Mercure** | $3.70$ |
+| **Vénus** | $8.87$ |
+| **Uranus** | $8.69$ |
+| **Saturne** | $10.44$ |
+| **Neptune** | $11.15$ |
+| **Jupiter** | $24.79$ |
 
 ---
 
-## 🧠 Principes physiques
+## 📋 Fonctionnalités Détaillées
 
-Le programme repose sur les équations du mouvement d’un projectile :
-- Sans frottement :  
-  \[
-  y(x) = h + x \tan(\alpha) - \frac{g x^2}{2 v_0^2 \cos^2(\alpha)}
-  \]
-- Avec frottement (linéaire ou quadratique) : intégration numérique pas-à-pas selon :
-  \[
-  \vec{F} = -k v^n - m g \hat{j}
-  \]
-  où *n = 1* pour le modèle linéaire et *n = 2* pour le modèle quadratique.
+### 🎯 Modes de Tir
+1.  **Simulation Libre :**
+    *   Contrôle total des paramètres initiaux : Vitesse ($v_0$), Angle ($\alpha$), Hauteur de départ ($h$), Hauteur d'arrivée.
+    *   Affichage en temps réel de la parabole.
+2.  **Mode Cible (Target Challenge) :**
+    *   Définissez une position cible $(x, y)$.
+    *   Le moteur physique résout l'équation quadratique pour trouver **les deux angles possibles** (tir tendu et tir en cloche) permettant d'atteindre la cible avec la vitesse donnée.
 
----
+### 🌬️ Physique Avancée & Aérodynamisme
+Contrairement aux simulateurs basiques, celui-ci intègre un moteur physique complet pour la résistance de l'air :
+*   **Modèles de Trainée :**
+    *   Lineaire ($f \propto v$) : Pour les basses vitesses ou particules fines.
+    *   Quadratique ($f \propto v^2$) : Pour les objets macroscopiques standards.
+*   **Paramètres du Projectile :**
+    *   Formes pré-configurées : Sphère ($C_x \approx 0.47$), Balle ($C_x \approx 0.295$), Cylindre.
+    *   Personnalisation complète : Masse, Rayon, et $C_x$ manuel.
+    *   Densité de l'air configurable.
 
-## 🖥️ Interface et ergonomie
+### 📊 Analyse de Données
+*   **Vecteurs Dynamiques :** Affichage des vecteurs vitesse ($\vec{v}$) et de leurs composantes ($v_x, v_y$) à chaque instant $t$.
+*   **Enveloppe de Sûreté :** Tracé en pointillés de la zone maximale atteignable par le projectile (parabole de sûreté).
+*   **Bilan Énergétique :** Calcul en direct de :
+    *   Énergie Cinétique ($E_c$)
+    *   Énergie Potentielle de pesanteur ($E_p$)
+    *   Pertes dues aux frottements (en Joules).
+*   **Équations Mathématiques :** Génération et affichage dynamique de l'équation de la trajectoire $y(x)$ basée sur les paramètres actuels.
 
-- **Canvas HTML5** pour le rendu des trajectoires et vecteurs.  
-- **Panneau de contrôle interactif**, accessible sur ordinateur et mobile.  
-- **Thème clair et moderne**, avec boutons colorés et sliders intuitifs.  
-- **Responsive design** : la mise en page s’adapte automatiquement à l’écran.
-
----
-
-## 📱 Utilisation
-
-1. Ouvre simplement le fichier [`index.html`](./index.html) dans ton navigateur.
-2. Choisis ton **mode** : *Simulation* ou *Cible*.
-3. Règle les paramètres (vitesse, angle, etc.).
-4. Clique sur **Go** pour lancer la simulation.
-5. Observe les résultats, les vecteurs vitesse et les équations générées.
-
----
-
-## 🧩 Technologies utilisées
-
-- **HTML5** (structure et canvas)
-- **CSS3** (mise en page responsive, design clair)
-- **JavaScript** (moteur de simulation et physique, rendu en temps réel)
-- Aucun framework externe requis — tout est en **vanilla JS**.
+### 🎨 Interface & Expérience Utilisateur
+*   **Thème Sombre / Clair :** Bascule automatique des couleurs (graphiques, vecteurs et interface) pour le confort visuel.
+*   **Responsive :** Menu latéral rétractable ("Burger menu") optimisé pour mobile et desktop.
+*   **Contrôle Temporel :** Slider de vitesse d'animation (ralenti ou accéléré), pause, et reset rapide.
+*   **Interaction Tactile :** Support du *drag & drop* pour déplacer la cible à la souris ou au doigt.
 
 ---
 
-## 👨‍🔬 Auteur
+## 🛠 Installation
 
-Projet développé par **Michel Esparsa**  
-📅 Dernière mise à jour : **03/11/2025**
+Aucune installation complexe requise. Ce projet est "Zero-Dependency".
 
----
-
-## 📜 Licence
-
-Ce projet est distribué sous licence **MIT**.  
-Tu peux le modifier, le réutiliser et le partager librement avec mention de l’auteur.
+1.  Clonez le dépôt :
+    ```bash
+    git clone https://github.com/votre-username/simulateur-parabolique.git
+    ```
+2.  Ouvrez simplement le fichier `index.html` dans votre navigateur.
 
 ---
 
+## 📐 Aperçu Technique
+
+Le projet repose sur une boucle d'animation (`requestAnimationFrame`) et deux méthodes de calcul :
+
+### 1. Méthode Analytique (Sans frottement)
+Utilisée pour les calculs instantanés et le tracé des enveloppes :
+$$y(x) = -\frac{g}{2v_0^2 \cos^2(\alpha)} x^2 + \tan(\alpha)x + h$$
+
+### 2. Méthode Numérique d'Euler (Avec frottement)
+Utilisée lorsque la résistance de l'air est activée. La simulation itère tous les $16ms$ ($dt$) pour recalculer les vecteurs vitesse et position en fonction des forces appliquées (Gravité + Trainée).
+
+---
+
+## 👤 Auteur
+
+**Michel ESPARSA**
+*   Développement : 07/12/2025
+
+## 📄 Licence
+
+Projet libre de droits pour usage éducatif et personnel.
