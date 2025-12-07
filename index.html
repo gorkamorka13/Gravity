@@ -317,6 +317,10 @@
         color: var(--text-color);
       }
 
+      .planet-checkbox {
+        margin-right: 0px;
+      }
+
       /* Résultats */
       #results-display,
       #equation-display,
@@ -409,6 +413,206 @@
                 >
               </div>
 
+              <div class="control-group">
+                <label style="cursor: pointer; font-weight: bold; color: var(--text-color)">
+                  <input type="checkbox" id="comparisonCheckbox" style="margin-right: 8px" /> Mode Comparaison
+                </label>
+              </div>
+
+              <div
+                id="planet-comparison-container"
+                class="control-group hidden"
+                style="margin-top: 10px; border: 1px solid var(--section-border); padding: 10px; border-radius: 6px"
+              >
+                <label style="font-size: 13px; margin-bottom: 8px; color: var(--text-secondary); display: block"
+                  >Sélectionner les planètes :</label
+                >
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px">
+                  <!-- L'ajout clé est : justify-content: flex-start !important -->
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="terre"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Terre
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="lune"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Lune
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="mars"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Mars
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="venus"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Vénus
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="mercure"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Mercure
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="jupiter"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Jupiter
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="saturne"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Saturne
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="uranus"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Uranus
+                  </label>
+
+                  <label
+                    style="
+                      display: flex !important;
+                      justify-content: flex-start !important;
+                      align-items: center !important;
+                      cursor: pointer;
+                      color: var(--text-color);
+                      font-size: 12px;
+                      margin: 0;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      class="planet-checkbox"
+                      value="neptune"
+                      style="margin: 0 6px 0 0 !important; width: auto !important"
+                    />
+                    Neptune
+                  </label>
+                </div>
+              </div>
+
               <div class="action-row">
                 <button id="pauseButton" class="btn btn-go">Go</button>
                 <button id="resetButton" class="btn btn-reset">Reset</button>
@@ -421,7 +625,7 @@
           </div>
 
           <!-- SECTION 2: LANCEMENT -->
-          <div class="section collapsible">
+          <div class="section collapsible collapsed">
             <div class="section-header">🚀 Paramètres de Tir</div>
             <div class="section-content">
               <!-- Mode Simulation -->
@@ -433,6 +637,14 @@
                 <div class="control-group">
                   <label>Angle (α): <input type="number" id="alphaInput" /> °</label>
                   <input type="range" id="alphaSlider" min="0" max="90" step="1" value="45" />
+                </div>
+                <div class="control-group">
+                  <label>Hauteur départ (h): <input type="number" id="hInput" /></label>
+                  <input type="range" id="hSlider" min="0" max="50" step="0.5" value="0" />
+                </div>
+                <div id="h-arrivee-control" class="control-group">
+                  <label>Hauteur arrivée: <input type="number" id="hArriveeInput" /></label>
+                  <input type="range" id="hArriveeSlider" min="0" max="50" step="0.5" value="0" />
                 </div>
               </div>
 
@@ -459,18 +671,18 @@
             <div class="section-content">
               <div id="common-controls">
                 <div class="control-group">
-                  <label>Hauteur départ (h): <input type="number" id="hInput" /></label>
-                  <input type="range" id="hSlider" min="0" max="50" step="0.5" value="0" />
-                </div>
-
-                <div id="h-arrivee-control" class="control-group">
-                  <label>Hauteur arrivée: <input type="number" id="hArriveeInput" /></label>
-                  <input type="range" id="hArriveeSlider" min="0" max="50" step="0.5" value="0" />
-                </div>
-
-                <div class="control-group">
                   <label>Planète :</label>
-                  <select id="planetSelect" style="width: 100%; padding: 4px; border: 1px solid var(--input-border); border-radius: 4px; background-color: var(--bg-color); color: var(--text-color);">
+                  <select
+                    id="planetSelect"
+                    style="
+                      width: 100%;
+                      padding: 4px;
+                      border: 1px solid var(--input-border);
+                      border-radius: 4px;
+                      background-color: var(--bg-color);
+                      color: var(--text-color);
+                    "
+                  >
                     <option value="terre" selected>Terre (9.81 m/s²)</option>
                     <option value="lune">Lune (1.62 m/s²)</option>
                     <option value="mars">Mars (3.71 m/s²)</option>
@@ -484,7 +696,9 @@
                 </div>
 
                 <div class="control-group">
-                  <label>Gravité (g): <span id="gravityDisplay">9.81</span> m/s² <input type="number" id="gInput" /></label>
+                  <label
+                    >Gravité (g): <span id="gravityDisplay">9.81</span> m/s² <input type="number" id="gInput"
+                  /></label>
                   <input type="range" id="gSlider" min="1" max="25" step="0.01" value="9.81" />
                 </div>
 
@@ -752,11 +966,23 @@
         lune: 1.62,
         mars: 3.71,
         venus: 8.87,
-        mercure: 3.70,
+        mercure: 3.7,
         jupiter: 24.79,
         saturne: 10.44,
         uranus: 8.69,
         neptune: 11.15,
+      };
+
+      const PLANET_COLORS = {
+        terre: "#4facfe", // Blue
+        lune: "#dda0dd", // Plum
+        mars: "#f5576c", // Red
+        venus: "#ff1493", // Deep pink
+        mercure: "#a8edea", // Cyan
+        jupiter: "#d299c2", // Purple
+        saturne: "#fecfef", // Light purple
+        uranus: "#a8e6cf", // Green
+        neptune: "#ffd3a5", // Orange
       };
 
       const DT = 0.016;
@@ -807,10 +1033,9 @@
         velocityVectorScale: 0.3,
         projectileShape: "sphere",
         isComparisonMode: false,
+        selectedPlanets: [],
         comparisonTrajectories: [],
         currentComparisonIndex: 0,
-        comparisonPlanets: [],
-        comparisonColors: ["#4facfe", "#888", "#e74c3c", "#9b59b6"], // Blue, Gray, Red, Purple
       };
       const DRAG_COEFF_PRESETS = {
         sphere: 0.47,
@@ -1410,6 +1635,18 @@
         ctx.restore();
       }
 
+      // === ÉTIQUETTE D'IMPACT ===
+      function drawImpactLabel(x, text, color) {
+        const p = transform(x, 0);
+        ctx.save();
+        ctx.font = "bold 16px Arial";
+        ctx.fillStyle = color;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(text, p.tx, p.ty - 10);  // Position au-dessus de l'axe x
+        ctx.restore();
+      }
+
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1449,15 +1686,18 @@
           ctx.stroke();
         };
 
-        if (state.mode === "target") drawTargetMarker(state.target.x, state.target.y);
-        else if (state.dureeVol > 0) drawTargetMarker(state.porteeX, state.hArrivee);
+        if (!state.isComparisonMode) {
+          if (state.mode === "target") drawTargetMarker(state.target.x, state.target.y);
+          else if (state.dureeVol > 0) drawTargetMarker(state.porteeX, state.hArrivee);
+        }
 
         // Enveloppe
         if (
           enveloppeCheckbox.checked &&
           !state.isResistanceActive &&
           state.enveloppe.x.length > 1 &&
-          state.mode === "simulation"
+          state.mode === "simulation" &&
+          !state.isComparisonMode
         ) {
           ctx.beginPath();
           const p0 = transform(state.enveloppe.x[0], state.enveloppe.y[0]);
@@ -1507,7 +1747,13 @@
             }
           };
 
-          if (state.isDualTrajectoryMode) {
+          if (state.isComparisonMode) {
+            // Draw all comparison trajectories
+            state.comparisonTrajectories.forEach((traj) => {
+              drawPath(traj.trajectoire, traj.color);
+              drawProjectileDot(traj.trajectoire, traj.color);
+            });
+          } else if (state.isDualTrajectoryMode) {
             drawPath(state.trajectoire1, "red");
             drawPath(state.trajectoire2, "purple");
             drawProjectileDot(state.trajectoire1, "red");
@@ -1552,6 +1798,28 @@
           ctx.setLineDash([4, 4]);
           ctx.stroke();
           ctx.setLineDash([]);
+        }
+
+        // Draw impact labels when each simulation finishes
+        if (state.mode === "simulation") {
+          if (!state.isComparisonMode) {
+            const frameIndex = Math.floor(state.currentFrameIndex);
+            if (frameIndex >= state.trajectoire.length - 1) {
+              const label = `${state.porteeX.toFixed(1)}m`;
+              const planetSelect = document.getElementById("planetSelect");
+              const planet = planetSelect.value;
+              const color = PLANET_COLORS[planet];
+              drawImpactLabel(state.porteeX, label, color);
+            }
+          } else {
+            const frameIndex = Math.floor(state.currentFrameIndex);
+            state.comparisonTrajectories.forEach((traj) => {
+              if (frameIndex >= traj.trajectoire.length - 1) {
+                const planetName = traj.planet.charAt(0).toUpperCase() + traj.planet.slice(1);
+                drawImpactLabel(traj.porteeX, planetName, traj.color);
+              }
+            });
+          }
         }
 
         // Draw credits in bottom right corner
@@ -1685,6 +1953,7 @@
         state.isUpdating = true;
         cancelAnimationFrame(state.animationId);
         try {
+          state.simulationFinished = false;
           state.showFinalTrajectory = true;
           ["h", "hArrivee", "g", "m", "speed", "radius", "dragCoeff"].forEach((key) => {
             if (sliders[key]) state[key] = parseFloat(sliders[key].value);
@@ -1693,7 +1962,10 @@
 
           const graphTitle = document.getElementById("graph-title");
 
-          if (state.isResistanceActive) {
+          if (state.isComparisonMode) {
+            graphTitle.innerHTML = `Comparaison Trajectoires<br>
+                                    <span style="font-weight:normal; font-size:0.9em;">Planètes sélectionnées</span>`;
+          } else if (state.isResistanceActive) {
             const modelText = state.dragModel === "quadratic" ? "(f ~ v²)" : "(f ~ v)";
             graphTitle.innerHTML = `Trajectoire du projectile<br>
                                     <span style="font-weight:normal; font-size:0.9em;">(avec frottement air ${modelText})</span>`;
@@ -1702,17 +1974,11 @@
                                     <span style="font-weight:normal; font-size:0.9em;">(sans frottement air)</span>`;
           }
 
-          if (state.mode === "simulation") {
+          if (state.isComparisonMode) {
+            updateComparisonTrajectories();
+          } else if (state.mode === "simulation") {
             state.v0 = parseFloat(sliders.v0.value);
             state.alpha = parseFloat(sliders.alpha.value);
-          } else {
-            state.v0 = parseFloat(sliders.v0Target.value);
-            state.target.x = parseFloat(inputs.targetX.value);
-            state.target.y = parseFloat(inputs.targetY.value);
-            state.h = parseFloat(sliders.h.value);
-          }
-
-          if (state.mode === "simulation") {
             state.isDualTrajectoryMode = false;
             const alphaRad = toRad(state.alpha);
             let characteristics;
@@ -1750,6 +2016,9 @@
               y: point.y,
               t: index * DT,
             }));
+            const epInitial = state.m * state.g * state.h;
+            const ecInitial = 0.5 * state.m * state.v0 ** 2;
+            const energieTotale = epInitial + ecInitial;
             state.staticResultsHTML = `<b>Caractéristiques du Vol :</b><ul><li>Hauteur max : <b>${state.yMax.toFixed(
               2
             )} m</b> (à x=${state.xSommet.toFixed(2)}m)</li><li>Portée : <b>${state.porteeX.toFixed(
@@ -1758,7 +2027,9 @@
               2
             )} s</b></li><li>Vitesse d'impact : <b>${state.vImpact.toFixed(
               2
-            )} m/s</b></li></ul><div id="energy-display"><ul><li>Énergie Initiale : <b>${state.eInitiale.toFixed(
+            )} m/s</b></li></ul><div id="energy-display"><ul><li>EP initial : <b>${epInitial.toFixed(
+              1
+            )} J</b></li><li>EC initial : <b>${ecInitial.toFixed(1)} J</b></li><li>Énergie totale : <b>${energieTotale.toFixed(
               1
             )} J</b></li><li>Énergie d'impact (Ec) : <b>${state.eImpact.toFixed(1)} J</b></li>${
               state.isResistanceActive
@@ -1767,6 +2038,12 @@
             }</ul></div>`;
             updateResultsText();
             updateEquationDisplay();
+          } else {
+            state.v0 = parseFloat(sliders.v0Target.value);
+            state.target.x = parseFloat(inputs.targetX.value);
+            state.target.y = parseFloat(inputs.targetY.value);
+            state.h = parseFloat(sliders.h.value);
+            calculateTargetSolutions();
           }
 
           Object.keys(inputs).forEach((key) => {
@@ -1779,23 +2056,26 @@
           });
 
           values.speed.textContent = `${state.speedFactor.toFixed(1)}x`;
-          const xMaxTarget = state.mode === "target" ? state.target.x : state.porteeX;
-          const yMaxTarget = state.mode === "target" ? state.target.y : state.hArrivee;
-          let xMaxEnv = !state.isResistanceActive && state.enveloppe.x.length > 1 ? state.enveloppe.x.slice(-1)[0] : 0;
-          state.xMaxGraph = Math.max(
-            10,
-            state.porteeX,
-            xMaxEnv,
-            xMaxTarget * 1.1,
-            state.trajectoire2 && state.trajectoire2.length > 0 ? state.trajectoire2.slice(-1)[0].x * 1.1 : 0
-          );
-          state.yMaxGraph = Math.max(
-            10,
-            state.yMax,
-            state.hArrivee,
-            !state.isResistanceActive && state.enveloppe.y.length > 1 ? Math.max(...state.enveloppe.y) : state.h,
-            yMaxTarget * 1.1
-          );
+          if (!state.isComparisonMode) {
+            const xMaxTarget = state.mode === "target" ? state.target.x : state.porteeX;
+            const yMaxTarget = state.mode === "target" ? state.target.y : state.hArrivee;
+            let xMaxEnv =
+              !state.isResistanceActive && state.enveloppe.x.length > 1 ? state.enveloppe.x.slice(-1)[0] : 0;
+            state.xMaxGraph = Math.max(
+              10,
+              state.porteeX,
+              xMaxEnv,
+              xMaxTarget * 1.1,
+              state.trajectoire2 && state.trajectoire2.length > 0 ? state.trajectoire2.slice(-1)[0].x * 1.1 : 0
+            );
+            state.yMaxGraph = Math.max(
+              10,
+              state.yMax,
+              state.hArrivee,
+              !state.isResistanceActive && state.enveloppe.y.length > 1 ? Math.max(...state.enveloppe.y) : state.h,
+              yMaxTarget * 1.1
+            );
+          }
           setTransform(state.xMaxGraph, state.yMaxGraph);
           state.currentFrameIndex = 0;
           state.isPaused = true;
@@ -1813,9 +2093,14 @@
       function animationLoop() {
         if (state.isPaused) return;
 
-        let maxFrames = state.isDualTrajectoryMode
-          ? Math.max(state.trajectoire1.length, state.trajectoire2.length)
-          : state.trajectoire.length;
+        let maxFrames = 0;
+        if (state.isComparisonMode) {
+          maxFrames = Math.max(...state.comparisonTrajectories.map((traj) => traj.trajectoire.length));
+        } else if (state.isDualTrajectoryMode) {
+          maxFrames = Math.max(state.trajectoire1.length, state.trajectoire2.length);
+        } else {
+          maxFrames = state.trajectoire.length;
+        }
 
         if (state.currentFrameIndex >= maxFrames - 1) {
           state.currentFrameIndex = maxFrames - 1;
@@ -1830,7 +2115,8 @@
           if (state.mode === "target") {
             updateTargetModeDisplays();
           } else {
-            updateResultsText("✓ Terminé");
+            updateResultsText();
+            state.simulationFinished = true;
           }
 
           draw();
@@ -1839,7 +2125,7 @@
 
         state.currentFrameIndex += state.speedFactor;
 
-        if (state.mode === "simulation") {
+        if (state.mode === "simulation" && !state.isComparisonMode) {
           const frameIndex = Math.floor(state.currentFrameIndex);
           const t = frameIndex * DT;
           const frame = state.trajectoire[frameIndex];
@@ -1864,6 +2150,7 @@
 
       function calculateTargetSolutions() {
         clearSolutions();
+        state.simulationFinished = false;
         state.showFinalTrajectory = false;
         state.isDualTrajectoryMode = false;
         state.currentFrameIndex = 0;
@@ -1910,24 +2197,12 @@
           else {
             solutionsDisplay.innerHTML = "";
             const characteristics1 = calculerCaracteristiques(v0, toRad(state.solutions[0]), h, g, state.m, target.y);
-            let traj1 = characteristics1.trajectoire;
-            const targetIndex1 = traj1.findIndex((p) => p.x >= target.x);
-            if (targetIndex1 !== -1) {
-              traj1 = traj1.slice(0, targetIndex1 + 1);
-              traj1[traj1.length - 1] = { x: target.x, y: target.y };
-            }
-            state.trajectoire1 = traj1;
+            state.trajectoire1 = characteristics1.trajectoire;
 
             if (state.solutions.length === 2) {
               state.isDualTrajectoryMode = true;
               const characteristics2 = calculerCaracteristiques(v0, toRad(state.solutions[1]), h, g, state.m, target.y);
-              let traj2 = characteristics2.trajectoire;
-              const targetIndex2 = traj2.findIndex((p) => p.x >= target.x);
-              if (targetIndex2 !== -1) {
-                traj2 = traj2.slice(0, targetIndex2 + 1);
-                traj2[traj2.length - 1] = { x: target.x, y: target.y };
-              }
-              state.trajectoire2 = traj2;
+              state.trajectoire2 = characteristics2.trajectoire;
               const yMax = Math.max(characteristics1.yMax, characteristics2.yMax, target.y, h);
               state.xMaxGraph = Math.max(10, target.x * 1.1);
               state.yMaxGraph = Math.max(10, yMax * 1.1);
@@ -1952,14 +2227,86 @@
         state.isDualTrajectoryMode = false;
       }
 
+      function updateComparisonTrajectories() {
+        if (!state.isComparisonMode || state.selectedPlanets.length === 0) return;
+
+        state.simulationFinished = false;
+        state.comparisonTrajectories = [];
+        state.currentComparisonIndex = 0;
+
+        state.v0 = parseFloat(sliders.v0.value);
+        state.alpha = parseFloat(sliders.alpha.value);
+        state.h = parseFloat(sliders.h.value);
+        state.hArrivee = parseFloat(sliders.hArrivee.value);
+        state.m = parseFloat(sliders.m.value);
+        state.isResistanceActive = resistanceCheckbox.checked;
+
+        const alphaRad = toRad(state.alpha);
+
+        state.selectedPlanets.forEach((planet) => {
+          const g = PLANET_GRAVITIES[planet];
+          let characteristics;
+          if (state.isResistanceActive) {
+            characteristics = calculerTrajectoireAvecFrottement(
+              state.v0,
+              alphaRad,
+              state.h,
+              g,
+              state.m,
+              state.hArrivee,
+              state.radius,
+              state.dragCoeff,
+              state.airDensity,
+              state.dragModel
+            );
+          } else {
+            characteristics = calculerCaracteristiques(state.v0, alphaRad, state.h, g, state.m, state.hArrivee);
+          }
+
+          state.comparisonTrajectories.push({
+            planet: planet,
+            color: PLANET_COLORS[planet],
+            trajectoire: characteristics.trajectoire,
+            yMax: characteristics.yMax,
+            porteeX: characteristics.porteeX,
+          });
+        });
+
+        // Update graph bounds
+        let xMax = 10,
+          yMax = 10;
+        state.comparisonTrajectories.forEach((traj) => {
+          xMax = Math.max(xMax, traj.porteeX * 1.1);
+          yMax = Math.max(yMax, traj.yMax * 1.1, state.h * 1.1, state.hArrivee * 1.1);
+        });
+        state.xMaxGraph = xMax;
+        state.yMaxGraph = yMax;
+        setTransform(state.xMaxGraph, state.yMaxGraph);
+
+        state.currentFrameIndex = 0;
+        state.isPaused = true;
+        state.animationId = null;
+        pauseButton.textContent = "Go";
+        mobileGoButton.textContent = "Go";
+        pauseButton.classList.remove("btn-pause");
+        pauseButton.classList.add("btn-go");
+        draw();
+      }
+
       function toggleAnimation() {
         if (state.mode === "target" && state.solutions.length === 0) return;
-        if (state.mode === "simulation" && state.dureeVol <= 0) return;
+        if (state.mode === "simulation" && !state.isComparisonMode && state.dureeVol <= 0) return;
+        if (state.isComparisonMode && state.comparisonTrajectories.length === 0) return;
 
         if (state.isPaused) {
-          let maxFrames = state.isDualTrajectoryMode
-            ? Math.max(state.trajectoire1.length, state.trajectoire2.length)
-            : state.trajectoire.length;
+          let maxFrames = 0;
+          if (state.isComparisonMode) {
+            maxFrames = Math.max(...state.comparisonTrajectories.map((traj) => traj.trajectoire.length));
+          } else if (state.isDualTrajectoryMode) {
+            maxFrames = Math.max(state.trajectoire1.length, state.trajectoire2.length);
+          } else {
+            maxFrames = state.trajectoire.length;
+          }
           if (state.currentFrameIndex >= maxFrames - 1 && maxFrames > 0) state.currentFrameIndex = 0;
           state.showFinalTrajectory = true;
         }
@@ -1975,6 +2322,7 @@
           openPanel();
         } else {
           state.startTime = Date.now();
+          state.simulationFinished = false;
           pauseButton.textContent = "Pause";
           mobileGoButton.textContent = "Pause";
           pauseButton.classList.remove("btn-go");
@@ -2021,6 +2369,13 @@
         state.positions = [];
         document.querySelector('input[name="projectileShape"][value="sphere"]').checked = true;
         state.projectileShape = "sphere";
+
+        // Reset comparison mode
+        document.getElementById("comparisonCheckbox").checked = false;
+        state.isComparisonMode = false;
+        document.querySelectorAll(".planet-checkbox").forEach(cb => cb.checked = false);
+        state.selectedPlanets = [];
+        state.comparisonTrajectories = [];
 
         const dragCoeffControl = document.getElementById("dragCoeff-control");
         dragCoeffControl.classList.add("disabled-by-shape");
@@ -2141,6 +2496,17 @@
       }
 
       function setupEventListeners() {
+        setupWindowResize();
+        setupSliderInputs();
+        setupButtons();
+        setupCheckboxes();
+        setupRadios();
+        setupSelects();
+        setupCanvasEvents();
+        setupComparisonMode();
+      }
+
+      function setupWindowResize() {
         const debounce = (fn, ms = 120) => {
           let t = null;
           return (...args) => {
@@ -2154,7 +2520,9 @@
           else calculateTargetSolutions();
         }, 120);
         window.addEventListener("resize", onResize, { passive: true });
+      }
 
+      function setupSliderInputs() {
         const linkSliderInput = (sliderElem, inputElem, onUpdate) => {
           if (!sliderElem || !inputElem) return;
           sliderElem.addEventListener(
@@ -2181,22 +2549,17 @@
         });
         if (sliders.v0Target && inputs.v0Target)
           linkSliderInput(sliders.v0Target, inputs.v0Target, calculateTargetSolutions);
-        inputs.targetX.addEventListener("input", calculateTargetSolutions, {
-          passive: true,
-        });
-        inputs.targetY.addEventListener("input", calculateTargetSolutions, {
-          passive: true,
-        });
+        inputs.targetX.addEventListener("input", calculateTargetSolutions, { passive: true });
+        inputs.targetY.addEventListener("input", calculateTargetSolutions, { passive: true });
 
+        const shared = () => {
+          if (state.mode === "simulation") update();
+          else calculateTargetSolutions();
+        };
         ["h"].forEach((key) => {
-          const shared = () => {
-            if (state.mode === "simulation") update();
-            else calculateTargetSolutions();
-          };
           if (sliders[key] && inputs[key]) linkSliderInput(sliders[key], inputs[key], shared);
         });
 
-        // Special handling for gravity to update display
         const gravityShared = () => {
           if (state.mode === "simulation") update();
           else calculateTargetSolutions();
@@ -2204,7 +2567,7 @@
         };
         if (sliders.g && inputs.g) linkSliderInput(sliders.g, inputs.g, gravityShared);
 
-        if (sliders.speed)
+        if (sliders.speed) {
           sliders.speed.addEventListener(
             "input",
             (e) => {
@@ -2213,10 +2576,18 @@
             },
             { passive: true }
           );
+        }
 
+        linkSliderInput(sliders.dragCoeff, inputs.dragCoeff, update);
+      }
+
+      function setupButtons() {
         modeRadios.forEach((radio) => radio.addEventListener("change", (e) => setMode(e.target.value)));
         resetButton.addEventListener("click", reset);
         pauseButton.addEventListener("click", toggleAnimation);
+      }
+
+      function setupCheckboxes() {
         enveloppeCheckbox.addEventListener("change", draw, { passive: true });
 
         resistanceCheckbox.addEventListener(
@@ -2244,26 +2615,6 @@
           { passive: true }
         );
 
-        document.querySelectorAll('input[name="dragModel"]').forEach((radio) =>
-          radio.addEventListener("change", (e) => {
-            state.dragModel = e.target.value;
-            update();
-          })
-        );
-
-        document.getElementById("planetSelect").addEventListener("change", (e) => {
-          const planet = e.target.value;
-          const gravity = PLANET_GRAVITIES[planet];
-          if (gravity !== undefined) {
-            state.g = gravity;
-            sliders.g.value = gravity;
-            inputs.g.value = gravity.toFixed(2);
-            updateGravityDisplay();
-            if (state.mode === "simulation") update();
-            else calculateTargetSolutions();
-          }
-        });
-
         document.getElementById("velocityVectorsCheckbox").addEventListener(
           "change",
           (e) => {
@@ -2290,6 +2641,62 @@
           { passive: true }
         );
 
+        document.getElementById("velocity-options").classList.toggle("hidden", !state.showVelocityVectors);
+      }
+
+      function setupRadios() {
+        document.querySelectorAll('input[name="dragModel"]').forEach((radio) =>
+          radio.addEventListener("change", (e) => {
+            state.dragModel = e.target.value;
+            update();
+          })
+        );
+
+        const projectileShapeRadios = document.querySelectorAll('input[name="projectileShape"]');
+        const dragCoeffControl = document.getElementById("dragCoeff-control");
+
+        const updateDragCoeffFromShape = () => {
+          const selectedRadio = document.querySelector('input[name="projectileShape"]:checked');
+          state.projectileShape = selectedRadio ? selectedRadio.value : "sphere";
+
+          if (state.projectileShape === "custom") {
+            dragCoeffControl.classList.remove("disabled-by-shape");
+            inputs.dragCoeff.disabled = false;
+            sliders.dragCoeff.disabled = false;
+          } else {
+            dragCoeffControl.classList.add("disabled-by-shape");
+            inputs.dragCoeff.disabled = true;
+            sliders.dragCoeff.disabled = true;
+            state.dragCoeff = DRAG_COEFF_PRESETS[state.projectileShape] || 0.47;
+            inputs.dragCoeff.value = state.dragCoeff.toFixed(2);
+            sliders.dragCoeff.value = state.dragCoeff;
+          }
+          update();
+        };
+
+        projectileShapeRadios.forEach((radio) => {
+          radio.addEventListener("change", updateDragCoeffFromShape);
+        });
+
+        updateDragCoeffFromShape();
+      }
+
+      function setupSelects() {
+        document.getElementById("planetSelect").addEventListener("change", (e) => {
+          const planet = e.target.value;
+          const gravity = PLANET_GRAVITIES[planet];
+          if (gravity !== undefined) {
+            state.g = gravity;
+            sliders.g.value = gravity;
+            inputs.g.value = gravity.toFixed(2);
+            updateGravityDisplay();
+            if (state.mode === "simulation") update();
+            else calculateTargetSolutions();
+          }
+        });
+      }
+
+      function setupCanvasEvents() {
         const onPointerDown = (e) => {
           if (typeof e.button !== "undefined" && e.button !== 0) return;
           handleMouseDown(e);
@@ -2310,16 +2717,10 @@
             } catch (err) {}
         };
 
-        canvas.addEventListener("pointerdown", onPointerDown, {
-          passive: false,
-        });
-        canvas.addEventListener("pointermove", onPointerMove, {
-          passive: false,
-        });
+        canvas.addEventListener("pointerdown", onPointerDown, { passive: false });
+        canvas.addEventListener("pointermove", onPointerMove, { passive: false });
         canvas.addEventListener("pointerup", onPointerUp, { passive: true });
-        canvas.addEventListener("pointercancel", onPointerUp, {
-          passive: true,
-        });
+        canvas.addEventListener("pointercancel", onPointerUp, { passive: true });
         window.addEventListener("pointerup", onPointerUp, { passive: true });
 
         try {
@@ -2327,43 +2728,43 @@
           canvas.removeEventListener("mousemove", handleMouseMove);
           window.removeEventListener("mouseup", handleMouseUp);
         } catch (err) {}
+      }
 
-        document.getElementById("velocity-options").classList.toggle("hidden", !state.showVelocityVectors);
-
-        const projectileShapeRadios = document.querySelectorAll('input[name="projectileShape"]');
-        const dragCoeffControl = document.getElementById("dragCoeff-control");
-
-        const updateDragCoeffFromShape = () => {
-          // 1. On récupère l'élément coché
-          const selectedRadio = document.querySelector('input[name="projectileShape"]:checked');
-
-          // 2. SÉCURITÉ : Si aucun n'est coché (null), on force "sphere" par défaut
-          // Cela évite le crash "can't access property value of null"
-          state.projectileShape = selectedRadio ? selectedRadio.value : "sphere";
-
-          if (state.projectileShape === "custom") {
-            dragCoeffControl.classList.remove("disabled-by-shape");
-            inputs.dragCoeff.disabled = false;
-            sliders.dragCoeff.disabled = false;
+      function setupComparisonMode() {
+        document.getElementById("comparisonCheckbox").addEventListener("change", (e) => {
+          state.isComparisonMode = e.target.checked;
+          document.getElementById("planet-comparison-container").classList.toggle("hidden", !state.isComparisonMode);
+          if (state.isComparisonMode) {
+            setMode("simulation");
+            document.querySelector('input[value="target"]').disabled = true;
+            updateComparisonTrajectories();
           } else {
-            dragCoeffControl.classList.add("disabled-by-shape");
-            inputs.dragCoeff.disabled = true;
-            sliders.dragCoeff.disabled = true;
-            // On s'assure que DRAG_COEFF_PRESETS[state.projectileShape] existe
-            state.dragCoeff = DRAG_COEFF_PRESETS[state.projectileShape] || 0.47;
-            inputs.dragCoeff.value = state.dragCoeff.toFixed(2);
-            sliders.dragCoeff.value = state.dragCoeff;
+            document.querySelector('input[value="target"]').disabled = false;
+            state.comparisonTrajectories = [];
+            state.selectedPlanets = [];
+            update();
           }
-          update();
-        };
-
-        projectileShapeRadios.forEach((radio) => {
-          radio.addEventListener("change", updateDragCoeffFromShape);
         });
 
-        linkSliderInput(sliders.dragCoeff, inputs.dragCoeff, update);
+        document.querySelectorAll(".planet-checkbox").forEach((checkbox) => {
+          checkbox.addEventListener("change", () => {
+            state.selectedPlanets = Array.from(document.querySelectorAll(".planet-checkbox:checked")).map(
+              (cb) => cb.value
+            );
+            if (state.isComparisonMode) {
+              updateComparisonTrajectories();
+            }
+          });
+        });
 
-        updateDragCoeffFromShape();
+        // Initialize state on load
+        state.selectedPlanets = Array.from(document.querySelectorAll(".planet-checkbox:checked")).map(
+          (cb) => cb.value
+        );
+        state.isComparisonMode = document.getElementById("comparisonCheckbox").checked;
+        if (state.isComparisonMode && state.selectedPlanets.length > 0) {
+          updateComparisonTrajectories();
+        }
       }
 
       /* =========================================
