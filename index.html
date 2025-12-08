@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <link rel="icon" type="image/png" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/gravity.png" />
     <title>Simulateur de Mouvement Parabolique</title>
     <style>
       /* =========================================
@@ -1643,7 +1643,7 @@
         ctx.fillStyle = color;
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
-        ctx.fillText(text, p.tx, p.ty - 10);  // Position au-dessus de l'axe x
+        ctx.fillText(text, p.tx, p.ty - 10); // Position au-dessus de l'axe x
         ctx.restore();
       }
 
@@ -2029,7 +2029,9 @@
               2
             )} m/s</b></li></ul><div id="energy-display"><ul><li>EP initial : <b>${epInitial.toFixed(
               1
-            )} J</b></li><li>EC initial : <b>${ecInitial.toFixed(1)} J</b></li><li>Énergie totale : <b>${energieTotale.toFixed(
+            )} J</b></li><li>EC initial : <b>${ecInitial.toFixed(
+              1
+            )} J</b></li><li>Énergie totale : <b>${energieTotale.toFixed(
               1
             )} J</b></li><li>Énergie d'impact (Ec) : <b>${state.eImpact.toFixed(1)} J</b></li>${
               state.isResistanceActive
@@ -2373,7 +2375,7 @@
         // Reset comparison mode
         document.getElementById("comparisonCheckbox").checked = false;
         state.isComparisonMode = false;
-        document.querySelectorAll(".planet-checkbox").forEach(cb => cb.checked = false);
+        document.querySelectorAll(".planet-checkbox").forEach((cb) => (cb.checked = false));
         state.selectedPlanets = [];
         state.comparisonTrajectories = [];
 
@@ -2758,9 +2760,7 @@
         });
 
         // Initialize state on load
-        state.selectedPlanets = Array.from(document.querySelectorAll(".planet-checkbox:checked")).map(
-          (cb) => cb.value
-        );
+        state.selectedPlanets = Array.from(document.querySelectorAll(".planet-checkbox:checked")).map((cb) => cb.value);
         state.isComparisonMode = document.getElementById("comparisonCheckbox").checked;
         if (state.isComparisonMode && state.selectedPlanets.length > 0) {
           updateComparisonTrajectories();
